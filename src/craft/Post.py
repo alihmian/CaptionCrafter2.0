@@ -19,7 +19,7 @@ def create_newspaper_image(
 ) -> None:
 
     # Load the base template and compose it with the user image and event overlays.
-    base_img = Image.open("Bases/Post.png").convert("RGBA")
+    base_img = Image.open("Bases/Post.png").convert("RGBA") if ''.join(c for c in events_text if not c.isspace())   else Image.open("Bases/PostNoEvent.png").convert("RGBA")
     draw = ImageDraw.Draw(base_img)
 
     # Load and paste user image.
@@ -50,7 +50,7 @@ def create_newspaper_image(
         overline_text,
         fonts["overline"],
         base_img.width // 2,
-        450,
+        425,
         alignment="center",
         font_size=overline_size,
         color="black",
@@ -58,8 +58,13 @@ def create_newspaper_image(
     )
 
     # Add main headline text.
-    margin = 75
-    headline_box = (margin, 527, base_img.width - 2 * margin, 210)
+    margin = 81
+    if  ''.join(c for c in overline_text if not c.isspace())   :
+        headline_box = (margin, 540, base_img.width - 2 * margin, 207)
+        print("❤️")
+    else:
+        headline_box = (margin, 374, base_img.width - 2 * margin, 373)
+
     headline_size = 60 + main_headline_font_size_delta
     draw_text_in_box(
         draw,
@@ -67,7 +72,7 @@ def create_newspaper_image(
         fonts["headline"],
         headline_box,
         alignment="center",
-        vertical_mode="top_to_bottom",
+        vertical_mode = "top_to_bottom" if ''.join(c for c in overline_text if not c.isspace())  else "center_expanded",
         auto_size=dynamic_font_size,
         font_size=headline_size,
         color="black",
@@ -77,7 +82,7 @@ def create_newspaper_image(
 
 
     # Define positions for dates.
-    y_anchor = 329
+    y_anchor = 328
     positions = {
         "weekday": (10, y_anchor),
         "persian_date": (base_img.width-80, y_anchor),

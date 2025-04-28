@@ -15,8 +15,8 @@ from typing import List, Tuple, Optional, Union
 DEFAULT_COLOR: Union[str, Tuple[int, int, int]] = "black"
 DEFAULT_FONT_SIZE: int = 24
 DEFAULT_LINE_SPACING: float = 1.0
-DEFAULT_MAX_FONT_SIZE: int = 250
-DEFAULT_MIN_FONT_SIZE: int = 10
+DEFAULT_MAX_FONT_SIZE: int = 55
+DEFAULT_MIN_FONT_SIZE: int = 5
 DEFAULT_IS_RTL: bool = True
 
 
@@ -245,42 +245,74 @@ def draw_text_in_box(
     )
 
     # Determine starting y-coordinate based on vertical_mode
+    # if vertical_mode == "top_to_bottom":
+    #     current_y = box_top
+    # elif vertical_mode == "center_expanded":
+    #     current_y = max(box_top + (box_height - total_text_height) / 2, box_top)
+    # elif vertical_mode == "bottom_to_top":
+    #     current_y = box_bottom - total_text_height
+    # else:
+    #     raise ValueError(
+    #         "vertical_mode must be 'top_to_bottom', 'center_expanded', or 'bottom_to_top'."
+    #     )
+
+    # common_h = max(line_heights) 
+
+    # # Draw each line with specified horizontal alignment
+    # for idx, line in enumerate(shaped_lines):
+    #     _left, _top, _right, _bottom = draw.textbbox((0, 0), line, font=font)
+    #     line_width = _right - _left
+    #     # line_height = _bottom - _top
+
+    #     # Horizontal alignment calculation
+    #     if alignment == "left":
+    #         current_x = box_left
+    #     elif alignment == "center":
+    #         current_x = box_left + (box_width - line_width) / 2
+    #     elif alignment == "right":
+    #         current_x = box_right - line_width
+    #     else:
+    #         raise ValueError("alignment must be 'left', 'center', or 'right'.")
+
+    #     # Draw the line
+    #     draw.text((current_x, current_y - top), line, font=font, fill=color)
+
+    #     # Update y-coordinate for next line
+    #     current_y += common_h * line_spacing
+    #     if current_y > box_bottom:
+    #         break
+    boxes      = [draw.textbbox((0,0), l, font=font) for l in shaped_lines]
+    line_sizes = [(r-l, b-t) for (l,t,r,b) in boxes]
+    first_top  = boxes[0][1]                         # may be negative
+
+    total_text_height = (
+        sum(h for _, h in line_sizes) +
+        (len(boxes)-1)*(line_spacing-1)*line_sizes[0][1]
+    )
+
+    # ── choose starting baseline according to vertical_mode ──────────────
     if vertical_mode == "top_to_bottom":
         current_y = box_top
     elif vertical_mode == "center_expanded":
-        current_y = max(box_top + (box_height - total_text_height) / 2, box_top)
+        current_y = box_top + (box_height - total_text_height) / 2
     elif vertical_mode == "bottom_to_top":
         current_y = box_bottom - total_text_height
     else:
-        raise ValueError(
-            "vertical_mode must be 'top_to_bottom', 'center_expanded', or 'bottom_to_top'."
-        )
+        raise ValueError("vertical_mode must be 'top_to_bottom', 'center_expanded', or 'bottom_to_top'.")
 
-    common_h = max(line_heights) 
+    current_y -= first_top           # compensate for the glyph ascent
+    # ─────────────────────────────────────────────────────────────────────
 
-    # Draw each line with specified horizontal alignment
-    for idx, line in enumerate(shaped_lines):
-        _left, _top, _right, _bottom = draw.textbbox((0, 0), line, font=font)
-        line_width = _right - _left
-        # line_height = _bottom - _top
-
-        # Horizontal alignment calculation
+    for (l,t,r,b), (w,h), line in zip(boxes, line_sizes, shaped_lines):
         if alignment == "left":
             current_x = box_left
         elif alignment == "center":
-            current_x = box_left + (box_width - line_width) / 2
-        elif alignment == "right":
-            current_x = box_right - line_width
-        else:
-            raise ValueError("alignment must be 'left', 'center', or 'right'.")
+            current_x = box_left + (box_width - w)/2
+        else:                          # "right"
+            current_x = box_right - w
 
-        # Draw the line
-        draw.text((current_x, current_y), line, font=font, fill=color)
-
-        # Update y-coordinate for next line
-        current_y += common_h * line_spacing
-        if current_y > box_bottom:
-            break
+        draw.text((current_x, current_y - t), line, font=font, fill=color)
+        current_y += h * line_spacing
 
 
 def draw_text_no_box(

@@ -226,7 +226,7 @@ async function imageConversation(conversation, ctx) {
                 return null;
             }
             const fileId = largestPhoto.file_id;
-            const localPath = "./assets/image_" + ctx.chatId + ".jpg";
+            const localPath = "./UserImages/image_" + ctx.chatId + ".jpg";
             const fileInfo = await ctx.api.getFile(fileId);
             const fileUrl = `https://api.telegram.org/file/bot${bot.token}/${fileInfo.file_path}`;
             const response = await fetch(fileUrl);

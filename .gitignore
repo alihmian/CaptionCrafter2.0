@@ -1,0 +1,44 @@
+# Ignore virtual environment folder
+venv/
+
+# Byte-compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Logs and database files
+*.log
+*.sqlite3
+*.db
+
+# VS Code settings
+.vscode/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# macOS system files
+.DS_Store
+
+# Environment variables
+.env
+
+# Well the size limit
+Design/
+
+# Hope nothing brakes
+node_modules/
+
+# Keep the repo clean!
+Trash/
+
+files/
+
+assets/Output/
+
+
+UserImages/
+
+
+OutPut/

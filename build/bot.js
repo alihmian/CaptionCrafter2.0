@@ -110,7 +110,7 @@ async function updateNewspaperImage(ctx) {
     //   [--event1_text TEXT] [--event2_text TEXT] [--event3_text TEXT] \
     //   [--days_into_future N] [--overline_font_size_delta N] [--main_headline_font_size_delta N]\
     //   [--dynamic_font_size] [--watermark] [--composed]
-    const pythonScript = "./src/Craft/Post.py"; // Adjust if needed
+    const pythonScript = "./src/craft/Post.py"; // Adjust if needed
     const args = [
         pythonScript,
         "--user_image_path", userImagePath,

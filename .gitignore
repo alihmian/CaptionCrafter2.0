@@ -1,3 +1,4 @@
+# .gitignore
 # Ignore virtual environment folder
 venv/
 
@@ -23,22 +24,11 @@ __pycache__/
 
 # Environment variables
 .env
-
-# Well the size limit
-Design/
-
-# Hope nothing brakes
-node_modules/
-
-# Keep the repo clean!
-Trash/
-
-files/
-
-assets/Output/
-
-
-UserImages/
-
-
-OutPut/
+# top-level folders
+/node_modules/
+/OutPut/
+/UserImages/
+/assets/
+/build/
+/sessions/
+/Design/

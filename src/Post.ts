@@ -441,7 +441,7 @@ async function finishConversation(
     try {
         await ctx.replyWithDocument(
             new InputFile(outputPath),
-            { caption: "فایل تصویر ایجاد شده" }
+            { caption: "فایل تصویر ایجاد شد" }
         );
     } catch (err) {
         console.error("Could not send final document to user:", err);

@@ -26,8 +26,9 @@ __pycache__/
 .env
 # top-level folders
 /node_modules/
-/OutPut/
-/UserImages/
+# /OutPut/
+# /UserImages/
 /build/
 /sessions/
 /Design/
+/MarkDowns/

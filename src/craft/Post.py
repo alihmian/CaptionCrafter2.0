@@ -15,11 +15,15 @@ def create_newspaper_image(
     dynamic_font_size: bool = True,
     overline_font_size_delta: int = 0,
     main_headline_font_size_delta: int = 0,
-    days_into_future = 0,
+    days_into_future=0,
 ) -> None:
 
     # Load the base template and compose it with the user image and event overlays.
-    base_img = Image.open("Bases/Post.png").convert("RGBA") if ''.join(c for c in events_text if not c.isspace())   else Image.open("Bases/PostNoEvent.png").convert("RGBA")
+    base_img = (
+        Image.open("Bases/Post.png").convert("RGBA")
+        if "".join(c for c in events_text if not c.isspace())
+        else Image.open("Bases/PostNoEvent.png").convert("RGBA")
+    )
     draw = ImageDraw.Draw(base_img)
 
     # Load and paste user image.
@@ -27,7 +31,6 @@ def create_newspaper_image(
     alpha = 58
     user_img_resized = user_img.resize((16 * alpha, 9 * alpha))
     base_img.paste(user_img_resized, (80, 747), user_img_resized)
-
 
     draw = ImageDraw.Draw(base_img)
 
@@ -40,30 +43,32 @@ def create_newspaper_image(
         "persian_date": "./Fonts/AbarLow-Regular.ttf",
         "weekday": "./Fonts/AbarLow-Regular.ttf",
         "event": "./Fonts/AbarLow-Regular.ttf",
-        "time": "./Fonts/Time-Normal.ttf"
+        "time": "./Fonts/Time-Normal.ttf",
     }
 
-    # Add overline text.
-    overline_size = 42 + overline_font_size_delta
-    draw_text_no_box(
-        draw,
-        overline_text,
-        fonts["overline"],
-        base_img.width // 2,
-        425,
-        alignment="center",
-        font_size=overline_size,
-        color="black",
-        is_rtl=False,
-    )
+
 
     # Add main headline text.
+    overline_height = 425
+    x_shift = 5
+    Overline = "".join(c for c in overline_text if not c.isspace())
+    Events = "".join(c for c in events_text if not c.isspace())
     margin = 81
-    if  ''.join(c for c in overline_text if not c.isspace())   :
-        headline_box = (margin, 540, base_img.width - 2 * margin, 207)
-        print("❤️")
-    else:
-        headline_box = (margin, 374, base_img.width - 2 * margin, 373)
+    if Overline and Events:                                             # ✅
+        headline_box = (margin, 540 + x_shift, base_img.width - 2 * margin, 190)
+        verticalMode = "top_to_bottom"
+        overline_height = 440
+        
+    elif not Overline and Events:                                       
+        headline_box = (margin, 440 + x_shift, base_img.width - 2 * margin, 280)
+        verticalMode = "center_expanded"
+    elif Overline and not Events:                                       # ✅
+        headline_box = (margin, 540 + x_shift, base_img.width - 2 * margin, 207)  
+        verticalMode = "top_to_bottom"
+
+    else:                                                               # ✅
+        headline_box = (margin, 390 + x_shift, base_img.width - 2 * margin, 373)  
+        verticalMode = "center_expanded"
 
     headline_size = 60 + main_headline_font_size_delta
     draw_text_in_box(
@@ -72,24 +77,36 @@ def create_newspaper_image(
         fonts["headline"],
         headline_box,
         alignment="center",
-        vertical_mode = "top_to_bottom" if ''.join(c for c in overline_text if not c.isspace())  else "center_expanded",
+        vertical_mode=verticalMode,
         auto_size=dynamic_font_size,
         font_size=headline_size,
         color="black",
         is_rtl=False,
-        line_spacing=1.2
+        line_spacing=1.2,
     )
 
-
+    # Add overline text.
+    overline_size = 42 + overline_font_size_delta
+    draw_text_no_box(
+        draw,
+        overline_text,
+        fonts["overline"],
+        base_img.width // 2,
+        overline_height ,
+        alignment="center",
+        font_size=overline_size,
+        color="black",
+        is_rtl=False,
+    )
     # Define positions for dates.
-    y_anchor = 328
+    y_anchor = 327
     positions = {
         "weekday": (10, y_anchor),
-        "persian_date": (base_img.width-80, y_anchor),
-        "arabic_date": (base_img.width/2 , y_anchor),
+        "persian_date": (base_img.width - 80, y_anchor),
+        "arabic_date": (base_img.width / 2, y_anchor),
         "english_date": (80, y_anchor),
         "time": (195, 240),
-        "event": (base_img.width/2, 375)
+        "event": (base_img.width / 2, 375),
     }
     date_font_size = 25
     date_color = (51, 51, 51)
@@ -127,7 +144,9 @@ def create_newspaper_image(
     )
     draw_text_no_box(
         draw,
-        day_of_week(days_into_future=days_into_future) + " " +shamsi(year=True, month=True, day=True) ,
+        day_of_week(days_into_future=days_into_future)
+        + " "
+        + shamsi(year=True, month=True, day=True),
         fonts["persian_date"],
         *positions["persian_date"],
         alignment="right",
@@ -176,7 +195,6 @@ if __name__ == "__main__":
         "--events_text", type=str, default=None, help="Optional text for event 1."
     )
 
-
     args = parser.parse_args()
 
     create_newspaper_image(
@@ -187,4 +205,4 @@ if __name__ == "__main__":
         events_text=args.events_text,
     )
 
-# python "./src/Craft/Post.py" --user_image_path="./UserImages/img.png" --overline_text="سوخت قاچاق در خليج فارس" --main_headline_text="كشف محموله عظيم سوخت قاچاق درخليج فارس؛ ضربه سنگين به قاچاقچيان" --output_path="./OutPut/Post_output.png" --events_text="رویداد " 
+# python "./src/Craft/Post.py" --user_image_path="./UserImages/img.png" --overline_text="سوخت قاچاق در خليج فارس" --main_headline_text="كشف محموله عظيم سوخت قاچاق درخليج فارس؛ ضربه سنگين به قاچاقچيان" --output_path="./OutPut/Post_output.png" --events_text="رویداد "

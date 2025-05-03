@@ -51,7 +51,9 @@ const log = (...args) => {
 const bot = new grammy_1.Bot("8056950160:AAGIF7ColbOQH5wF6lhWC2HNAib5mb624K8");
 // Use session, conversations, and hydration middleware
 bot.use((0, grammy_1.session)({
-    initial: () => ({}),
+    initial: () => ({
+        sentDocMsgIds: [],
+    }),
     storage: new storage_file_1.FileAdapter({ dirName: "./sessions" }),
 }));
 bot.use((0, conversations_1.conversations)());
@@ -279,7 +281,20 @@ async function eventsConversation(conversation, ctx) {
 // Clear form conversation: resets the session data and updates the menu
 async function clearFormConversation(conversation, ctx) {
     await ctx.answerCallbackQuery(); // first line of every button handler
-    await conversation.external((ctx) => {
+    // delete uploaded docs back in the user chat
+    await conversation.external(async (ctx) => {
+        const ids = ctx.session.sentDocMsgIds ?? [];
+        if (ids.length && ctx.chat) {
+            const chatId = ctx.chat.id;
+            for (const mid of ids) {
+                try {
+                    await ctx.api.deleteMessage(chatId, mid);
+                }
+                catch { /* already gone – ignore */ }
+            }
+        }
+        ctx.session.sentDocMsgIds = []; // reset
+        /* also wipe the other fields */
         ctx.session.Image = undefined;
         ctx.session.ImagePath = undefined;
         ctx.session.Overline = undefined;
@@ -299,35 +314,20 @@ async function clearFormConversation(conversation, ctx) {
 // Finish conversation: shows a summary and optionally performs final processing
 // Finish conversation: shows a summary and then deletes the menu, sends final doc, and logs in channel
 async function finishConversation(conversation, ctx) {
+    var _a;
     await ctx.answerCallbackQuery(); // first line of every button handler
     // 1) Gather final form data for logging or summarizing
     const finalData = await conversation.external((ctx) => collectFormData(ctx));
-    // 2) Run updateNewspaperImage so the final image is generated
-    //    (this ensures your Python script has produced the latest image).
-    // await conversation.external(async (ctx) => {
-    //     await updateNewspaperImage(ctx);
-    // });
-    // 3) Optionally send a summary message to the user (plain text).
-    // // 4) Delete the old menu message so it's gone from the chat
-    // const menuMsgId = ctx.session.mainMessageId;
-    // if (menuMsgId) {
-    //     try {
-    //         await ctx.api.deleteMessage(ctx.chat!.id, menuMsgId);
-    //     } catch (err) {
-    //         console.error("Could not delete menu message:", err);
-    //     }
-    // }
-    // 5) Send the final generated image as a document to the user
-    //    (Adjust caption as you wish.)
     const outputPath = getOutputPath(ctx);
     try {
-        await ctx.replyWithDocument(new grammy_1.InputFile(outputPath), { caption: "فایل تصویر ایجاد شد" });
+        const docMsg = await ctx.replyWithDocument(new grammy_1.InputFile(outputPath), { caption: "فایل تصویر ایجاد شد" });
+        // persist the message‑id
+        (_a = ctx.session).sentDocMsgIds ?? (_a.sentDocMsgIds = []);
+        ctx.session.sentDocMsgIds.push(docMsg.message_id);
     }
     catch (err) {
         console.error("Could not send final document to user:", err);
     }
-    // 6) Log the same document in your channel
-    //    This sends a document message to channel ID -1002302354978
     try {
         await ctx.api.sendDocument(-1002302354978, // your channel ID
         new grammy_1.InputFile(outputPath), {

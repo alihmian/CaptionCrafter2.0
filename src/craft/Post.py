@@ -125,7 +125,7 @@ def create_newspaper_image(
 
     draw_text_no_box(
         draw,
-        arabic(year=True, month=True, day=True, days_into_future=days_into_future),
+        arabic(year=True, month=True, day=True, days_into_future=days_into_future, language="arabic"),
         fonts["arabic_date"],
         *positions["arabic_date"],
         alignment="center",
@@ -160,16 +160,16 @@ def create_newspaper_image(
     base_img.convert("RGB").save(output_path, format="JPEG", quality=95)
 
 
-# if __name__ == "__main__":
-#     # Example usage in non-composed mode (function does full composition)
-#     create_newspaper_image(
-#         user_image_path="UserImages/img.png",
-#         overline_text="سوخت قاچاق در خليج فارس",
-#         main_headline_text=" لغو تحريم مسيرهاى ترانزيتى ايران پتانسيل بالاى راه آهن براى ارزآورى",
-#        events_text="روز بزركَداشت شيخ بهايى؛ روزملى كارآفرينى؛ روز معمارى",
-#         output_path="./OutPut/BreakingNews_output.png",
-#         dynamic_font_size=True
-#     )
+if __name__ == "__main__":
+    # Example usage in non-composed mode (function does full composition)
+    create_newspaper_image(
+        user_image_path="UserImages/img.png",
+        overline_text="سوخت قاچاق در خليج فارس",
+        main_headline_text=" لغو تحريم مسيرهاى ترانزيتى ايران پتانسيل بالاى راه آهن براى ارزآورى",
+       events_text="روز بزركَداشت شيخ بهايى؛ روزملى كارآفرينى؛ روز معمارى",
+        output_path="./OutPut/BreakingNews_output.png",
+        dynamic_font_size=True
+    )
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(

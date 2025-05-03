@@ -22,6 +22,23 @@ def to_farsi_numerals(text: str) -> str:
     return "".join(western_to_farsi.get(ch, ch) for ch in text)
 
 
+def to_arabic_numerals(text: str) -> str:
+    """Convert Western digits to Arabic‑Indic (so‑called ‘Hindi’) numerals."""
+    western_to_arabic = {
+        "0": "٠",
+        "1": "١",
+        "2": "٢",
+        "3": "٣",
+        "4": "٤",
+        "5": "٥",
+        "6": "٦",
+        "7": "٧",
+        "8": "٨",
+        "9": "٩",
+    }
+    return "".join(western_to_arabic.get(ch, ch) for ch in text)
+
+
 # Mapping for Farsi names of Gregorian months
 farsi_gregorian_months = {
     1: "ژانویه",
@@ -166,7 +183,7 @@ def arabic(
     year: bool,
     month: bool,
     day: bool,
-    language: str = "farsi",
+    language: str = "arabic",
     date: Optional[datetime] = None,
     days_into_future: int = 0,
     separator: str = " ",
@@ -188,17 +205,20 @@ def arabic(
         day_str = str(i_day)
         if language.lower() == "farsi":
             day_str = to_farsi_numerals(day_str)
+        elif language.lower() == "arabic":
+            day_str = to_arabic_numerals(day_str)
         components.append(day_str)
     if month:
         if month_format.lower() == "name":
-            if language.lower() == "farsi":
+            if language.lower() == "english":
+
                 try:
-                    month_name = farsi_islamic_months[i_month - 1]
+                    month_name = english_islamic_months[i_month - 1]
                 except IndexError:
                     month_name = str(i_month)
             else:
                 try:
-                    month_name = english_islamic_months[i_month - 1]
+                    month_name = farsi_islamic_months[i_month - 1]
                 except IndexError:
                     month_name = str(i_month)
             components.append(month_name)
@@ -206,11 +226,16 @@ def arabic(
             m_str = str(i_month)
             if language.lower() == "farsi":
                 m_str = to_farsi_numerals(m_str)
+            elif language.lower() == "arabic":          
+                m_str = to_arabic_numerals(m_str)      
             components.append(m_str)
+
     if year:
         year_str = str(i_year)
         if language.lower() == "farsi":
             year_str = to_farsi_numerals(year_str)
+        elif language.lower() == "arabic":          # NEW
+            year_str = to_arabic_numerals(year_str) # NEW
         components.append(year_str)
     return separator.join(components)
 

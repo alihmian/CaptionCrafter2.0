@@ -122,10 +122,10 @@ english_to_farsi_weekdays = {
     "Monday": "دوشنبه",
     "Tuesday": "سه‌شنبه",
     "Wednesday": "چهارشنبه",
-    "Thursday": "پنجشنبه",
+    "Thursday": "پنج‌شنبه",
     "Friday": "جمعه",
     "Saturday": "شنبه",
-    "Sunday": "یکشنبه",
+    "Sunday": "یک‌شنبه",
 }
 
 english_to_farsi_weekdays_abbrev = {

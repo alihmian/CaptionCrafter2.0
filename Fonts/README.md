@@ -40,3 +40,11 @@ headline
 ``Fonts/AbarLow-Black.ttf``
 Source 
 ``Fonts/AbarLow-Regular.ttf``
+
+# currency
+
+date
+``Fonts/AbarMid-Regular.ttf``
+
+currencies
+``Fonts/AbarMid-SemiBold.ttf``

@@ -1,7 +1,9 @@
 from PIL import Image, ImageDraw
-from text_utils import draw_text_no_box, draw_text_in_box
-from date_util import shamsi, arabic, georgian, day_of_week
+from text_utils import draw_text_no_box
+from date_util import shamsi, day_of_week
 import argparse
+import re
+from typing import Union
 
 DEFAULT_IS_RTL: bool = False
 
@@ -20,6 +22,32 @@ def to_farsi_numerals(text: str) -> str:
         "9": "۹",
     }
     return "".join(western_to_farsi.get(ch, ch) for ch in text)
+
+_persian2latin = str.maketrans("۰۱۲۳۴۵۶۷۸۹", "0123456789")
+_thousands_sep  = "٫"        # U+066C  (looks right‑to‑left, unlike ‘,’)
+
+def normalise_number(raw: str) -> int:
+    """
+    1) Bring every digit to Latin 0‑9
+    2) Treat Persian decimal mark (٫) and ASCII dot as the SAME
+    3) Throw away everything else
+    4) If you still have >1 dot, the dots were thousands‑seps ⇒ drop them
+    """
+    s = raw.translate(_persian2latin)
+    s = s.replace("٫", ".")
+    # keep only digits or a dot
+    s = re.sub(r"[^0-9.]", "", s)
+
+    if s.count(".") > 1:          # they were thousands‑separators
+        s = s.replace(".", "")
+    return int(float(s))          # works even if user typed a decimal fraction
+
+def farsi_fmt(num: Union[int, str]) -> str:
+    """Return a nicely‑grouped Persian string such as ۸٬۵۶۸٬۰۷۴٬۳۰۰"""
+    if isinstance(num, str):
+        num = normalise_number(num)
+    s = f"{num:,}".replace(",", _thousands_sep)     # add RTL comma
+    return to_farsi_numerals(s)
 
 
 def create_currency_post(
@@ -73,7 +101,7 @@ def create_currency_post(
     currencyFontSize = 65
     draw_text_no_box(
         draw,
-        to_farsi_numerals(Dollar),
+        farsi_fmt(Dollar).replace(".","٫"),
         fonts["currency"],
         *positions["Dollar"],
         alignment="center",
@@ -83,7 +111,7 @@ def create_currency_post(
     )
     draw_text_no_box(
         draw,
-        to_farsi_numerals(Euro),
+        farsi_fmt(Euro),
         fonts["currency"],
         *positions["Euro"],
         alignment="center",
@@ -93,7 +121,7 @@ def create_currency_post(
     )
     draw_text_no_box(
         draw,
-        to_farsi_numerals(Lira),
+        farsi_fmt(Lira),
         fonts["currency"],
         *positions["Lira"],
         alignment="center",
@@ -103,7 +131,7 @@ def create_currency_post(
     )
     draw_text_no_box(
         draw,
-        to_farsi_numerals(Dinar),
+        farsi_fmt(Dinar),
         fonts["currency"],
         *positions["Dinar"],
         alignment="center",
@@ -113,7 +141,7 @@ def create_currency_post(
     )
     draw_text_no_box(
         draw,
-        to_farsi_numerals(Dirham),
+        farsi_fmt(Dirham),
         fonts["currency"],
         *positions["Dirham"],
         alignment="center",
@@ -123,7 +151,7 @@ def create_currency_post(
     )
     draw_text_no_box(
         draw,
-        to_farsi_numerals(ChineseYuan),
+        farsi_fmt(ChineseYuan),
         fonts["currency"],
         *positions["ChineseYuan"],
         alignment="center",
@@ -133,7 +161,7 @@ def create_currency_post(
     )
     draw_text_no_box(
         draw,
-        to_farsi_numerals(SaudiRiyal),
+        farsi_fmt(SaudiRiyal),
         fonts["currency"],
         *positions["SaudiRiyal"],
         alignment="center",
@@ -147,18 +175,18 @@ def create_currency_post(
     base_img.convert("RGB").save(output_path, format="JPEG", quality=95)
 
 
-# if __name__ == "__main__":
-#     # Example usage: pass custom currency values with more zeros and specify an output path.
-#     create_currency_post(
-#         Dollar="10000000",
-#         Euro="8500000",
-#         Lira="7500000",
-#         Dinar="5000000",
-#         Dirham="6000000",
-#         ChineseYuan="9500000",
-#         SaudiRiyal="11000000",
-#         output_path="./OutPut/Currency_example.jpeg",
-#     )
+if __name__ == "__main__":
+    # Example usage: pass custom currency values with more zeros and specify an output path.
+    create_currency_post(
+        Dollar="10000000",
+        Euro="8500000",
+        Lira="7500000",
+        Dinar="5000000",
+        Dirham="6000000",
+        ChineseYuan="9500000",
+        SaudiRiyal="11000000",
+        output_path="./OutPut/Currency_example.jpeg",
+    )
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(

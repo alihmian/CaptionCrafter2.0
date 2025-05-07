@@ -249,5 +249,8 @@ bot.command("start", async (ctx) => {
     log("Bot started for", userId);
 });
 bot.catch((err) => log("Global error", err));
+bot.api.setMyCommands([
+    { command: "start", description: "رباتو روشن کن!" },
+]);
 bot.start();
 log("Bot running …");

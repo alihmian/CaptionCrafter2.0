@@ -3,6 +3,7 @@
 from datetime import datetime, timedelta
 from typing import Optional
 from convertdate import persian, islamic
+from zoneinfo import ZoneInfo
 
 
 # Helper: Convert Western digits in a string to Farsi numerals
@@ -226,16 +227,16 @@ def arabic(
             m_str = str(i_month)
             if language.lower() == "farsi":
                 m_str = to_farsi_numerals(m_str)
-            elif language.lower() == "arabic":          
-                m_str = to_arabic_numerals(m_str)      
+            elif language.lower() == "arabic":
+                m_str = to_arabic_numerals(m_str)
             components.append(m_str)
 
     if year:
         year_str = str(i_year)
         if language.lower() == "farsi":
             year_str = to_farsi_numerals(year_str)
-        elif language.lower() == "arabic":          # NEW
-            year_str = to_arabic_numerals(year_str) # NEW
+        elif language.lower() == "arabic":  # NEW
+            year_str = to_arabic_numerals(year_str)  # NEW
         components.append(year_str)
     return separator.join(components)
 
@@ -323,34 +324,51 @@ def clock_time(
     minutes_into_future: int = 0,
     seconds_into_future: int = 0,
     separator: str = ":",
+    timezone: str = "Asia/Tehran",  # ← NEW  (Iran by default)
     **kwargs,
 ) -> str:
     """
-    Returns a formatted clock time string with options to include hours, minutes, and seconds.
-    It also supports an optional time offset.
+    Returns a formatted clock-time string, with optional offsets, digit-set
+    conversion, **and timezone awareness**.
 
-    If language is "farsi", the resulting digits are converted to Farsi numerals.
+    • `timezone` – IANA name (e.g. 'Europe/Berlin').
+      Default 'Asia/Tehran'.
+    • If the supplied `date` is naïve, it is assumed to be in `timezone`.
+      If it is timezone-aware, it is converted to `timezone`.
     """
+    tz = ZoneInfo(timezone)
+
+    # 1️⃣  Get a timezone-aware base datetime
     if date is None:
-        date = datetime.now()
-    # Apply the time offset
+        date = datetime.now(tz)
+    else:
+        if date.tzinfo is None:
+            date = date.replace(tzinfo=tz)
+        else:
+            date = date.astimezone(tz)
+
+    # 2️⃣  Apply requested offsets
     date += timedelta(
         hours=hours_into_future,
         minutes=minutes_into_future,
         seconds=seconds_into_future,
     )
 
-    components = []
+    # 3️⃣  Build the time string
+    parts = []
     if show_hours:
-        components.append(f"{date.hour:02d}")
+        parts.append(f"{date.hour:02d}")
     if show_minutes:
-        components.append(f"{date.minute:02d}")
+        parts.append(f"{date.minute:02d}")
     if show_seconds:
-        components.append(f"{date.second:02d}")
+        parts.append(f"{date.second:02d}")
 
-    time_str = separator.join(components)
+    time_str = separator.join(parts)
+
+    # 4️⃣  Localise digits if needed
     if language.lower() == "farsi":
         time_str = to_farsi_numerals(time_str)
+
     return time_str
 
 

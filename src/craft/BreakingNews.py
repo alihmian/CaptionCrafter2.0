@@ -101,7 +101,9 @@ def create_newspaper_image(
         "time": (195, 240),
     }
     date_font_size = 25
-    date_color = (160, 128, 128)
+    # date_color = (160, 128, 128)
+    date_color = "white"
+
     # Draw date texts.
 
     draw_text_no_box(
@@ -133,7 +135,8 @@ def create_newspaper_image(
         alignment="right",
         font_size=date_font_size,
         is_rtl=DEFAULT_IS_RTL,
-        color=(209, 128, 128),
+        color=date_color,
+        # color=(209, 128, 128),
     )
     draw_text_no_box(
         draw,
@@ -151,15 +154,15 @@ def create_newspaper_image(
     base_img.convert("RGB").save(output_path, format="JPEG", quality=95)
 
 
-# if __name__ == "__main__":
-#     # Example usage in non-composed mode (function does full composition)
-#     create_newspaper_image(
-#         user_image_path="UserImages/img.png",
-#         overline_text="سوخت قاچاق در خليج فارس",
-#         main_headline_text= "ترامپ با سفر به تهران با آقاى پزشكيان ديدار مى كند",
-#         output_path="./OutPut/BreakingNews_output.png",
-#         dynamic_font_size=True
-#     )
+if __name__ == "__main__":
+    # Example usage in non-composed mode (function does full composition)
+    create_newspaper_image(
+        user_image_path="UserImages/img.png",
+        overline_text="سوخت قاچاق در خليج فارس",
+        main_headline_text= "ترامپ با سفر به تهران با آقاى پزشكيان ديدار مى كند",
+        output_path="./OutPut/BreakingNews_output.png",
+        dynamic_font_size=True
+    )
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(

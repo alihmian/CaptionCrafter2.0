@@ -15,7 +15,7 @@ def create_newspaper_image(
     overline_font_size_delta: int = 0,
     main_headline_font_size_delta: int = 0,
     days_into_future=0,
-    events_text = "",
+    events_text="",
 ) -> None:
 
     # Load the base template and compose it with the user image and event overlays.
@@ -62,7 +62,7 @@ def create_newspaper_image(
         headline_box = (margin, 390 + x_shift, base_img.width - 2 * margin, 373)
         verticalMode = "center_expanded"
 
-    headline_size = 60 + main_headline_font_size_delta
+    headline_size = 100 + main_headline_font_size_delta
     draw_text_in_box(
         draw,
         main_headline_text,
@@ -75,6 +75,7 @@ def create_newspaper_image(
         color="white",
         is_rtl=False,
         line_spacing=1.2,
+        max_font_size=65
     )
 
     # Add overline text.
@@ -159,41 +160,41 @@ if __name__ == "__main__":
     create_newspaper_image(
         user_image_path="UserImages/img.png",
         overline_text="سوخت قاچاق در خليج فارس",
-        main_headline_text= "ترامپ با سفر به تهران با آقاى پزشكيان ديدار مى كند",
+        main_headline_text="ترامپ با سفر به تهران با آقاى پزشكيان ديدار مى كند",
         output_path="./OutPut/BreakingNews_output.png",
-        dynamic_font_size=True
+        dynamic_font_size=True,
     )
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="Generate a newspaper-style image with text overlays and optional watermark."
-    )
-    parser.add_argument(
-        "--user_image_path",
-        type=str,
-        required=True,
-        help="Path to the user image or pre-composed base image.",
-    )
-    parser.add_argument(
-        "--overline_text", type=str, required=True, help="The overline text."
-    )
-    parser.add_argument(
-        "--main_headline_text", type=str, required=True, help="The main headline text."
-    )
-    parser.add_argument(
-        "--output_path", type=str, required=True, help="Path to save the final image."
-    )
+# if __name__ == "__main__":
+#     parser = argparse.ArgumentParser(
+#         description="Generate a newspaper-style image with text overlays and optional watermark."
+#     )
+#     parser.add_argument(
+#         "--user_image_path",
+#         type=str,
+#         required=True,
+#         help="Path to the user image or pre-composed base image.",
+#     )
+#     parser.add_argument(
+#         "--overline_text", type=str, required=True, help="The overline text."
+#     )
+#     parser.add_argument(
+#         "--main_headline_text", type=str, required=True, help="The main headline text."
+#     )
+#     parser.add_argument(
+#         "--output_path", type=str, required=True, help="Path to save the final image."
+#     )
 
-    parser.add_argument(
-        "--events_text", type=str, default=None, help="Optional text for event 1."
-    )
+#     parser.add_argument(
+#         "--events_text", type=str, default=None, help="Optional text for event 1."
+#     )
 
-    args = parser.parse_args()
+#     args = parser.parse_args()
 
-    create_newspaper_image(
-        user_image_path=args.user_image_path,
-        overline_text=args.overline_text,
-        main_headline_text=args.main_headline_text,
-        output_path=args.output_path,
-        events_text=args.events_text,
-    )
+#     create_newspaper_image(
+#         user_image_path=args.user_image_path,
+#         overline_text=args.overline_text,
+#         main_headline_text=args.main_headline_text,
+#         output_path=args.output_path,
+#         events_text=args.events_text,
+#     )

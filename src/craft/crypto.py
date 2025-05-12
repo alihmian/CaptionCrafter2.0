@@ -124,40 +124,42 @@ def create_crypto_post(
     base_img.convert("RGB").save(output_path, format="JPEG", quality=95)
 
 
-if __name__ == "__main__":
-    create_crypto_post(
-        Bitcoin="3820000000",
-        Ethereum="190000000",
-        Tether="50000",
-        Ripple="17000",
-        BinanceCoin="12000000",
-        Solana="6000000",
-        USD_Coin="50000",
-        Dogecoin="2000",
-        output_path="./OutPut/test_crypto_output.jpeg"
-    )
-
-
 # if __name__ == "__main__":
-#     parser = argparse.ArgumentParser(description="Generate a gold prices image.")
-#     parser.add_argument("--Gold", type=str, default="0")
-#     parser.add_argument("--Coin", type=str, default="0")
-#     parser.add_argument("--HalfCoin", type=str, default="0")
-#     parser.add_argument("--QuarterCoin", type=str, default="0")
-#     parser.add_argument("--Gold18", type=str, default="0")
-#     parser.add_argument("--Gold24", type=str, default="0")
-#     parser.add_argument("--output_path", type=str, required=True)
-
-#     args = parser.parse_args()
-
-#     create_gold_post(
-#         Gold=args.Gold,
-#         Coin=args.Coin,
-#         HalfCoin=args.HalfCoin,
-#         QuarterCoin=args.QuarterCoin,
-#         Gold18=args.Gold18,
-#         Gold24=args.Gold24,
-#         output_path=args.output_path,
+#     create_crypto_post(
+#         Bitcoin="3820000000",
+#         Ethereum="190000000",
+#         Tether="50000",
+#         Ripple="17000",
+#         BinanceCoin="12000000",
+#         Solana="6000000",
+#         USD_Coin="50000",
+#         Dogecoin="2000",
+#         output_path="./OutPut/test_crypto_output.jpeg"
 #     )
 
-# # # python "./src/Craft/Post.py" --user_image_path="./UserImages/img.png" --overline_text="سوخت قاچاق در خليج فارس" --main_headline_text="كشف محموله عظيم سوخت قاچاق درخليج فارس؛ ضربه سنگين به قاچاقچيان" --output_path="./OutPut/Post_output.png" --events_text="رویداد "
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Generate a crypto price image.")
+    parser.add_argument("--Bitcoin", type=str, default="0", help="Price of Bitcoin")
+    parser.add_argument("--Ethereum", type=str, default="0", help="Price of Ethereum")
+    parser.add_argument("--Tether", type=str, default="0", help="Price of Tether")
+    parser.add_argument("--Ripple", type=str, default="0", help="Price of Ripple")
+    parser.add_argument("--BinanceCoin", type=str, default="0", help="Price of Binance Coin")
+    parser.add_argument("--Solana", type=str, default="0", help="Price of Solana")
+    parser.add_argument("--USD_Coin", type=str, default="0", help="Price of USD Coin")
+    parser.add_argument("--Dogecoin", type=str, default="0", help="Price of Dogecoin")
+    parser.add_argument("--output_path", type=str, required=True, help="Path to save the image")
+
+    args = parser.parse_args()
+
+    create_crypto_post(
+        Bitcoin=args.Bitcoin,
+        Ethereum=args.Ethereum,
+        Tether=args.Tether,
+        Ripple=args.Ripple,
+        BinanceCoin=args.BinanceCoin,
+        Solana=args.Solana,
+        USD_Coin=args.USD_Coin,
+        Dogecoin=args.Dogecoin,
+        output_path=args.output_path,
+    )

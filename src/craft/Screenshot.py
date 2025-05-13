@@ -102,6 +102,7 @@ def create_newspaper_image(
         line_spacing=1.4,
     )
 
+
     # Save the final image.
     print("python code log: created news paper image.")
     base_img.convert("RGB").save(output_path, format="JPEG", quality=95)

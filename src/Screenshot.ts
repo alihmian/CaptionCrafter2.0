@@ -113,7 +113,7 @@ async function updateNewspaperImage(ctx: MyContext) {
 
 
 
-    const pythonScript = "./src/craft/screenshot.py"; // Adjust if needed
+    const pythonScript = "./src/craft/Screenshot.py"; // Adjust if needed
     const args = [
         pythonScript,
         "--user_image_path", userImagePath,

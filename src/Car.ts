@@ -106,6 +106,7 @@ async function updatecarImage(ctx: MyContext) {
             "./src/craft/car1.py",
             "--prices",
             List1,
+            "--output_path",
             outputPath,
         ];
     } else {
@@ -113,6 +114,7 @@ async function updatecarImage(ctx: MyContext) {
             "./src/craft/car2.py",
             "--prices",
             List2,
+            "--output_path",
             outputPath,
         ];
     }
@@ -198,76 +200,154 @@ function buildFormMenu(conversation: Conversation<MyContext, any>, data: FormDat
 //  Conversation generators for each car field
 // --------------------------------------------------
 function createCarConversation(fieldName: carField, prompt: string, flagValue: boolean) {
+
     return async function (conversation: FieldConversation, ctx: MyContext) {
-        ctx.session.oneORtwo = flagValue; 
+        await conversation.external((ctx) => {
+            ctx.session.oneORtwo = flagValue;
+        });
         await handleFieldInput(conversation, ctx, { fieldName, promptMessage: prompt }, buildFormMenu);
     };
 }
 
 
 
-const List1Conversation = createCarConversation("List1", "لطفا مقدار لیست اول را وارد کنید",true);
-const List2Conversation = createCarConversation("List2", "لطفا مقدار لیست دوم را وارد کنید",false);
+const List1Conversation = createCarConversation("List1", "لطفا مقدار لیست اول را وارد کنید", true);
+const List2Conversation = createCarConversation("List2", "لطفا مقدار لیست دوم را وارد کنید", false);
 
 // clear form conversation
-async function clearFormConversation(conversation: FieldConversation, ctx: FieldContext) {
+// async function clearFormConversation(conversation: FieldConversation, ctx: FieldContext) {
+//     await ctx.answerCallbackQuery();
+
+//     await conversation.external((ctx) => {
+//         ctx.session.List1 = ctx.session.List2 = ctx.session.List2 = undefined;
+//         ctx.session.sentDocMsgIds = [];
+//     });
+
+//     const clearedMenu = buildFormMenu(conversation, collectFormData(ctx));
+//     await ctx.editMessageMedia({ type: "photo", media: new InputFile("./assets/GOLD_TEMPLATE.png") });
+//     await ctx.editMessageReplyMarkup({ reply_markup: clearedMenu });
+// }
+async function clearFormConversation(
+    conversation: FieldConversation,
+    ctx: MyContext,
+) {
     await ctx.answerCallbackQuery();
 
-    await conversation.external((ctx) => {
-        ctx.session.List1 = ctx.session.List2 = ctx.session.List2 = undefined;
-        ctx.session.sentDocMsgIds = [];
+    await conversation.external(async (ctxExt) => {
+        const ids = ctxExt.session.sentDocMsgIds ?? [];
+
+        // delete previously sent doc messages, ignore errors
+        for (const id of ids) {
+            try {
+                if (ctxExt.chat) {
+                    await ctxExt.api.deleteMessage(ctxExt.chat.id, id);
+                }
+            } catch { }
+        }
+
+        // reset session (but keep the PNG on disk)
+        ctxExt.session.sentDocMsgIds = [];
+        ctxExt.session.List1 = ctxExt.session.List2 = undefined;
     });
 
+    // rebuild the empty form
     const clearedMenu = buildFormMenu(conversation, collectFormData(ctx));
-    await ctx.editMessageMedia({ type: "photo", media: new InputFile("./assets/GOLD_TEMPLATE.png") });
+    await ctx.editMessageMedia({
+        type: "photo",
+        media: new InputFile("./assets/GOLD_TEMPLATE.png"),
+    });
     await ctx.editMessageReplyMarkup({ reply_markup: clearedMenu });
 }
 
+// async function finishConversation(
+//     conversation: FieldConversation,
+//     ctx: MyContext
+// ) {
+//     await conversation.external(updatecarImage);   // ← add this line
+
+//     await ctx.answerCallbackQuery();   // first line of every button handler
+
+//     // 1) Gather final form data for logging or summarizing
+//     const finalData = await conversation.external((ctx: MyContext) =>
+//         collectFormData(ctx)
+//     );
+
+//     const outputPath = getOutputPath(ctx);
+//     try {
+//         const docMsg = await ctx.replyWithDocument(
+//             new InputFile(outputPath),
+//             { caption: "فایل تصویر ایجاد شد" }
+//         );
+
+
+
+//         // persist the message‑id
+//         ctx.session.sentDocMsgIds ??= [];
+//         ctx.session.sentDocMsgIds.push(docMsg.message_id);
+
+
+//     } catch (err) {
+//         console.error("Could not send final document to user:", err);
+//     }
+
+
+//     try {
+//         await ctx.api.sendDocument(
+//             -1002302354978, // your channel ID
+//             new InputFile(outputPath),
+//             {
+//                 caption: `User @${ctx.from?.username} (ID: ${ctx.from?.id}) just finished their form!`,
+//             }
+//         );
+//     } catch (err) {
+//         console.error("Could not send log to channel:", err);
+//     }
+
+
+// }
 async function finishConversation(
     conversation: FieldConversation,
-    ctx: MyContext
+    ctx: MyContext,
 ) {
-    await conversation.external(updatecarImage);   // ← add this line
+    // Always acknowledge the button tap first
+    await ctx.answerCallbackQuery();
 
-    await ctx.answerCallbackQuery();   // first line of every button handler
+    await conversation.external(async (ctxExt: MyContext) => {
+        // 1) Render the image and gather final form data
+        await updatecarImage(ctxExt);
+        const finalData = collectFormData(ctxExt);  // sync or await if needed
 
-    // 1) Gather final form data for logging or summarizing
-    const finalData = await conversation.external((ctx: MyContext) =>
-        collectFormData(ctx)
-    );
+        const outputPath = getOutputPath(ctxExt);
 
-    const outputPath = getOutputPath(ctx);
-    try {
-        const docMsg = await ctx.replyWithDocument(
-            new InputFile(outputPath),
-            { caption: "فایل تصویر ایجاد شد" }
-        );
+        // 2) Send the document to the user
+        try {
+            const docMsg = await ctxExt.replyWithDocument(
+                new InputFile(outputPath),
+                { caption: "فایل تصویر ایجاد شد" },
+            );
 
+            // Persist the message-id safely
+            ctxExt.session.sentDocMsgIds ??= [];
+            ctxExt.session.sentDocMsgIds.push(docMsg.message_id);
+        } catch (err) {
+            console.error("Could not send final document to user:", err);
+        }
 
-        // persist the message‑id
-        ctx.session.sentDocMsgIds ??= [];
-        ctx.session.sentDocMsgIds.push(docMsg.message_id);
-
-
-    } catch (err) {
-        console.error("Could not send final document to user:", err);
-    }
-
-
-    try {
-        await ctx.api.sendDocument(
-            -1002302354978, // your channel ID
-            new InputFile(outputPath),
-            {
-                caption: `User @${ctx.from?.username} (ID: ${ctx.from?.id}) just finished their form!`,
-            }
-        );
-    } catch (err) {
-        console.error("Could not send log to channel:", err);
-    }
-
-
+        // 3) Log the document in your channel
+        try {
+            await ctxExt.api.sendDocument(
+                -1002302354978,                                  // channel ID
+                new InputFile(outputPath),
+                {
+                    caption: `User @${ctxExt.from?.username} (ID: ${ctxExt.from?.id}) just finished their form!`,
+                },
+            );
+        } catch (err) {
+            console.error("Could not send log to channel:", err);
+        }
+    });
 }
+
 // --------------------------------------------------
 //  Register conversations
 // --------------------------------------------------

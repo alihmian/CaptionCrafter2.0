@@ -279,37 +279,69 @@ async function eventsConversation(conversation, ctx) {
     }, buildFormMenu);
 }
 // Clear form conversation: resets the session data and updates the menu
+// async function clearFormConversation(
+//     conversation: FieldConversation,
+//     ctx: FieldContext
+// ) {
+//     await ctx.answerCallbackQuery();   // first line of every button handler
+//     // delete uploaded docs back in the user chat
+//     await conversation.external(async (ctx) => {
+//         const ids = ctx.session.sentDocMsgIds ?? [];
+//         if (ids.length && ctx.chat) {
+//             const chatId = ctx.chat.id;
+//             for (const mid of ids) {
+//                 try { await ctx.api.deleteMessage(chatId, mid); }
+//                 catch { /* already gone – ignore */ }
+//             }
+//         }
+//         ctx.session.sentDocMsgIds = [];      // reset
+//         /* also wipe the other fields */
+// ctx.session.Image = undefined;
+// ctx.session.ImagePath = undefined;
+// ctx.session.Overline = undefined;
+// ctx.session.MainHeadline = undefined;
+// ctx.session.Events = undefined;
+//     });
+//     const clearedData = await conversation.external((ctx: MyContext) =>
+//         collectFormData(ctx)
+//     );
+//     const clearedMenu = buildFormMenu(conversation, clearedData);
+//     // Optionally, reset the media to a default image (ensure the file exists)
+//     await ctx.editMessageMedia({
+//         type: "photo",
+//         media: new InputFile("./assets/ZAMAN_EGTESAD_LOGO.png"),
+//     });
+//     await ctx.editMessageReplyMarkup({ reply_markup: clearedMenu });
+//     log(`User ${ctx.from?.id} cleared the form.`);
+// }
 async function clearFormConversation(conversation, ctx) {
-    await ctx.answerCallbackQuery(); // first line of every button handler
-    // delete uploaded docs back in the user chat
-    await conversation.external(async (ctx) => {
-        const ids = ctx.session.sentDocMsgIds ?? [];
-        if (ids.length && ctx.chat) {
-            const chatId = ctx.chat.id;
-            for (const mid of ids) {
-                try {
-                    await ctx.api.deleteMessage(chatId, mid);
+    await ctx.answerCallbackQuery();
+    await conversation.external(async (ctxExt) => {
+        const ids = ctxExt.session.sentDocMsgIds ?? [];
+        // delete previously sent doc messages, ignore errors
+        for (const id of ids) {
+            try {
+                if (ctxExt.chat) {
+                    await ctxExt.api.deleteMessage(ctxExt.chat.id, id);
                 }
-                catch { /* already gone – ignore */ }
             }
+            catch { }
         }
-        ctx.session.sentDocMsgIds = []; // reset
-        /* also wipe the other fields */
+        // reset session (but keep the PNG on disk)
+        ctxExt.session.sentDocMsgIds = [];
         ctx.session.Image = undefined;
         ctx.session.ImagePath = undefined;
         ctx.session.Overline = undefined;
         ctx.session.MainHeadline = undefined;
         ctx.session.Events = undefined;
     });
-    const clearedData = await conversation.external((ctx) => collectFormData(ctx));
-    const clearedMenu = buildFormMenu(conversation, clearedData);
-    // Optionally, reset the media to a default image (ensure the file exists)
+    // rebuild the empty form
+    const clearedMenu = buildFormMenu(conversation, collectFormData(ctx));
     await ctx.editMessageMedia({
         type: "photo",
-        media: new grammy_1.InputFile("./assets/ZAMAN_EGTESAD_LOGO.png"),
+        media: new grammy_1.InputFile("./assets/GOLD_TEMPLATE.png"),
     });
     await ctx.editMessageReplyMarkup({ reply_markup: clearedMenu });
-    log(`User ${ctx.from?.id} cleared the form.`);
 }
 // Finish conversation: shows a summary and optionally performs final processing
 // Finish conversation: shows a summary and then deletes the menu, sends final doc, and logs in channel

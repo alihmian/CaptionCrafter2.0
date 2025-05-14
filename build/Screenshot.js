@@ -152,7 +152,7 @@ function buildFormMenu(conversation, data) {
         .text(data.MainHeadline ? "تیتر ✅" : "تیتر ❌", (ctx) => ctx.conversation.enter("mainHeadlineConversation"))
         .row()
         // Event1 (was Text3)
-        .text(data.source ? "منبع ✅ " : "منبع ❌", (ctx) => ctx.conversation.enter("sourceConversation"))
+        .text(data.source ? "سورس ✅ " : "سورس ❌", (ctx) => ctx.conversation.enter("sourceConversation"))
         .row()
         // Final row for finishing or clearing the form
         .text("فایل ✅", (ctx) => ctx.conversation.enter("finishConversation"))
@@ -274,7 +274,7 @@ async function sourceConversation(conversation, ctx) {
     await ctx.answerCallbackQuery(); // first line of every button handler
     await handleFieldInput(conversation, ctx, {
         fieldName: "source",
-        promptMessage: "لطفا منبع را ارسال کنید",
+        promptMessage: "لطفا سورس را ارسال کنید",
         waitType: "text",
     }, buildFormMenu);
 }
@@ -371,7 +371,7 @@ exports.formMenu = new menu_1.Menu("form", {
     .row()
     .text((ctx) => {
     const data = collectFormData(ctx);
-    return data.source ? "منبع ✅ " : "منبع ❌";
+    return data.source ? "سورس ✅ " : "سورس ❌";
 }, (ctx) => ctx.conversation.enter("sourceConversation"))
     .row()
     .text("فایل ✅ ", (ctx) => ctx.conversation.enter("finishConversation"))

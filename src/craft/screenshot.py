@@ -1,5 +1,6 @@
-from PIL import Image, ImageDraw, ImageOps
+from PIL import Image, ImageDraw
 from text_utils import draw_text_no_box, draw_text_in_box
+from date_util import shamsi, arabic, georgian, day_of_week
 import argparse
 
 DEFAULT_IS_RTL: bool = False
@@ -11,38 +12,26 @@ def create_newspaper_image(
     main_headline_text: str,
     source_text: str,
     output_path: str,
+    events_text: str = "",
     dynamic_font_size: bool = True,
     overline_font_size_delta: int = 0,
     main_headline_font_size_delta: int = 0,
+    days_into_future=0,
 ) -> None:
 
     # Load the base template and compose it with the user image and event overlays.
-    base_img = Image.open("Bases/Screenshot.png").convert("RGBA")
+    base_img = (
+        Image.open("Bases/Screenshot.png").convert("RGBA")
+        if "".join(c for c in events_text if not c.isspace())
+        else Image.open("Bases/Screenshot.png").convert("RGBA")
+    )
     draw = ImageDraw.Draw(base_img)
 
     # Load and paste user image.
-
-    # --- white-box coordinates taken from the template ---
-    box_left, box_top = 81, 672
-    box_right = base_img.width - box_left
-    box_bottom = 1263
-    box_w, box_h = box_right - box_left, box_bottom - box_top
-    margin = 40
-
-    # open the user image
     user_img = Image.open(user_image_path).convert("RGBA")
-
-    # resize (only if larger) but keep aspect ratio
-    user_img = ImageOps.contain(
-        user_img, (box_w - margin, box_h - margin), Image.LANCZOS
-    )
-
-    # centre it inside the white box
-    paste_x = box_left + (box_w - user_img.width) // 2
-    paste_y = box_top + (box_h - user_img.height) // 2
-
-    # paste (use the image itself as the mask to keep transparency)
-    base_img.paste(user_img, (paste_x, paste_y), user_img)
+    alpha = 58
+    user_img_resized = user_img.resize((16 * alpha, 9 * alpha))
+    base_img.paste(user_img_resized, (80, 747), user_img_resized)
 
     draw = ImageDraw.Draw(base_img)
 
@@ -54,39 +43,33 @@ def create_newspaper_image(
         "english_date": "./Fonts/AbarLow-Regular.ttf",
         "persian_date": "./Fonts/AbarLow-Regular.ttf",
         "weekday": "./Fonts/AbarLow-Regular.ttf",
+        "event": "./Fonts/AbarLow-Regular.ttf",
+        "source": "./Fonts/AbarLow-Regular.ttf",
         "time": "./Fonts/Time-Normal.ttf",
     }
 
-    # Add overline text.
-    overline_size = 42 + overline_font_size_delta
-    draw_text_no_box(
-        draw,
-        overline_text,
-        fonts["overline"],
-        base_img.width / 2,
-        320,
-        alignment="center",
-        font_size=overline_size,
-        color="black",
-        is_rtl=False,
-    )
-
-    # Add source text.
-    draw_text_no_box(
-        draw,
-        "source: " + source_text,
-        fonts["overline"],
-        box_left,
-        box_top - 40,
-        alignment="left",
-        font_size=25,
-        color=(155, 155, 153),
-        is_rtl=not DEFAULT_IS_RTL,
-    )
-
     # Add main headline text.
-    margin = 110
-    headline_box = (margin, 430, base_img.width - 2 * margin, 200)
+    overline_height = 425
+    x_shift = 5
+    Overline = "".join(c for c in overline_text if not c.isspace())
+    Events = "".join(c for c in events_text if not c.isspace())
+    margin = 81
+    if Overline and Events:  # ✅
+        headline_box = (margin, 540 + x_shift, base_img.width - 2 * margin, 190)
+        verticalMode = "top_to_bottom"
+        overline_height = 440
+
+    elif not Overline and Events:
+        headline_box = (margin, 440 + x_shift, base_img.width - 2 * margin, 280)
+        verticalMode = "center_expanded"
+    elif Overline and not Events:  # ✅
+        headline_box = (margin, 540 + x_shift, base_img.width - 2 * margin, 207)
+        verticalMode = "top_to_bottom"
+
+    else:  # ✅
+        headline_box = (margin, 390 + x_shift, base_img.width - 2 * margin, 373)
+        verticalMode = "center_expanded"
+
     headline_size = 60 + main_headline_font_size_delta
     draw_text_in_box(
         draw,
@@ -94,31 +77,116 @@ def create_newspaper_image(
         fonts["headline"],
         headline_box,
         alignment="center",
-        vertical_mode="top_to_bottom",
+        vertical_mode=verticalMode,
         auto_size=True,
         font_size=headline_size,
         color="black",
-        is_rtl=DEFAULT_IS_RTL,
-        line_spacing=1.4,
+        is_rtl=False,
+        line_spacing=1.2,
     )
 
+    # Add overline text.
+    overline_size = 42 + overline_font_size_delta
+    draw_text_no_box(
+        draw,
+        overline_text,
+        fonts["overline"],
+        base_img.width // 2,
+        overline_height,
+        alignment="center",
+        font_size=overline_size,
+        color="black",
+        is_rtl=False,
+    )
+    draw_text_no_box(
+        draw,
+        source_text,
+        fonts["source"],
+        160,
+        703,
+        alignment="left",
+        font_size=22,
+        color=(158, 155, 148),
+        is_rtl=True,
+    )
+    # Define positions for dates.
+    y_anchor = 327
+    positions = {
+        "weekday": (10, y_anchor),
+        "persian_date": (base_img.width - 80, y_anchor),
+        "arabic_date": (base_img.width / 2, y_anchor),
+        "english_date": (80, y_anchor),
+        "time": (195, 240),
+        "event": (base_img.width / 2, 375),
+    }
+    date_font_size = 25
+    date_color = (51, 51, 51)
+    # Draw date texts.
+
+    draw_text_no_box(
+        draw,
+        events_text,
+        fonts["event"],
+        *positions["event"],
+        alignment="center",
+        font_size=date_font_size,
+        is_rtl=DEFAULT_IS_RTL,
+        color=date_color
+    )
+
+    draw_text_no_box(
+        draw,
+        arabic(
+            year=True,
+            month=True,
+            day=True,
+            days_into_future=days_into_future,
+            language="arabic",
+        ),
+        fonts["arabic_date"],
+        *positions["arabic_date"],
+        alignment="center",
+        font_size=date_font_size,
+        is_rtl=DEFAULT_IS_RTL,
+        color=date_color
+    )
+    draw_text_no_box(
+        draw,
+        georgian(year=True, month=True, day=True, days_into_future=days_into_future),
+        fonts["english_date"],
+        *positions["english_date"],
+        alignment="left",
+        font_size=date_font_size,
+        color=date_color
+    )
+    draw_text_no_box(
+        draw,
+        day_of_week(days_into_future=days_into_future)
+        + " "
+        + shamsi(year=True, month=True, day=True),
+        fonts["persian_date"],
+        *positions["persian_date"],
+        alignment="right",
+        font_size=date_font_size,
+        is_rtl=DEFAULT_IS_RTL,
+        color=date_color
+    )
 
     # Save the final image.
     print("python code log: created news paper image.")
     base_img.convert("RGB").save(output_path, format="JPEG", quality=95)
 
 
-# if __name__ == "__main__":
-# Example usage in non-composed mode (function does full composition)
-# create_newspaper_image(
-#     user_image_path="UserImages/img.png",
-#     overline_text="سوخت قاچاق در خليج فارس",
-#     main_headline_text= "تحریم‌های اقتصادی آمریکا علیه  و ملت ایران بسیار ظالمانه است",
-#     source_text="BoJack Horseman",
-#     output_path="./OutPut/BreakingNews_output.png",
-#     dynamic_font_size=True
-# )
-
+if __name__ == "__main__":
+    # Example usage in non-composed mode (function does full composition)
+    create_newspaper_image(
+        user_image_path="UserImages/img.png",
+        overline_text="سوخت قاچاق در خليج فارس",
+        main_headline_text=" لغو تحريم مسيرهاى ترانزيتى ايران پتانسيل بالاى راه آهن براى ارزآورى",
+        source_text="Tqwewittter",
+        output_path="./OutPut/Screenshot_output.png",
+        dynamic_font_size=True,
+    )
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Generate a newspaper-style image with text overlays and optional watermark."
@@ -167,12 +235,3 @@ if __name__ == "__main__":
         overline_font_size_delta=args.overline_font_size_delta,
         main_headline_font_size_delta=args.main_headline_font_size_delta,
     )
-
-# python "./src/Craft/screenshot_template.py" --user_image_path="./assets/user_image.jpg" --overline_text="سوخت قاچاق در خليج فارس" --main_headline_text="كشف محموله عظيم سوخت قاچاق درخليج فارس؛ ضربه سنگين به قاچاقچيان" --output_path="assets/OutPut/
-
-# python src/Craft/screenshot.py \
-#   --user_image_path UserImages/img.png \
-#   --overline_text "سوخت قاچاق در خلیج فارس" \
-#   --main_headline_text "تحریم‌های اقتصادی آمریکا علیه دولت و ملت ایران بسیار ظالمانه است" \
-#   --source "BoJack Horseman" \
-#   --output_path output/scree2nshot.jpg \

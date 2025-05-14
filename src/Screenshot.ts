@@ -199,7 +199,7 @@ function buildFormMenu(
         .row()
         // Event1 (was Text3)
         .text(
-            data.source ? "منبع ✅ " : "منبع ❌",
+            data.source ? "سورس ✅ " : "سورس ❌",
             (ctx) => ctx.conversation.enter("sourceConversation")
         )
 
@@ -372,7 +372,7 @@ async function sourceConversation(
 
     await handleFieldInput(conversation, ctx, {
         fieldName: "source",
-        promptMessage: "لطفا منبع را ارسال کنید",
+        promptMessage: "لطفا سورس را ارسال کنید",
         waitType: "text",
     }, buildFormMenu);
 }
@@ -512,7 +512,7 @@ export const formMenu = new Menu<MyContext>("form", {
     .row()
     .text((ctx) => {
         const data = collectFormData(ctx);
-        return data.source ? "منبع ✅ " : "منبع ❌";
+        return data.source ? "سورس ✅ " : "سورس ❌";
     }, (ctx) => ctx.conversation.enter("sourceConversation"))
     .row()
     .text("فایل ✅ ", (ctx) => ctx.conversation.enter("finishConversation"))

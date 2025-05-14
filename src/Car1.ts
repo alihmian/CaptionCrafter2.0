@@ -187,10 +187,10 @@ function buildFormMenu(conversation: Conversation<MyContext, any>, data: FormDat
     return (
         conversation
             .menu("form")
-            .text(data.List1 ? "لیست اول " : "لیست اول ", (ctx) => ctx.conversation.enter("List1Conversation"))
+            .text(data.List1 ? "لیست  " : "لیست  ", (ctx) => ctx.conversation.enter("List1Conversation"))
             .row()
-            .text(data.List2 ? "لیست دوم " : "لیست دوم ", (ctx) => ctx.conversation.enter("List2Conversation"))
-            .row()
+            // .text(data.List2 ? "لیست دوم " : "لیست دوم ", (ctx) => ctx.conversation.enter("List2Conversation"))
+            // .row()
             .text("فایل ✅", (ctx) => ctx.conversation.enter("finishConversation"))
             .text("🧹", (ctx) => ctx.conversation.enter("clearFormConversation"))
     );
@@ -211,7 +211,7 @@ function createCarConversation(fieldName: carField, prompt: string, flagValue: b
 
 
 
-const List1Conversation = createCarConversation("List1", "لطفا مقدار لیست اول را وارد کنید", true);
+const List1Conversation = createCarConversation("List1", "لطفا مقدار لیست  را وارد کنید", true);
 const List2Conversation = createCarConversation("List2", "لطفا مقدار لیست دوم را وارد کنید", false);
 
 // clear form conversation
@@ -254,7 +254,7 @@ async function clearFormConversation(
     const clearedMenu = buildFormMenu(conversation, collectFormData(ctx));
     await ctx.editMessageMedia({
         type: "photo",
-        media: new InputFile("./assets/CAR_TEMPLATE.png"),
+        media: new InputFile("./assets/CAR1_TEMPLATE.png"),
     });
     await ctx.editMessageReplyMarkup({ reply_markup: clearedMenu });
 }
@@ -361,10 +361,10 @@ bot.use(createConversation(finishConversation, "finishConversation"));
 //  Stand‑alone menu instance (needed for /start)
 // --------------------------------------------------
 export const formMenu = new Menu<MyContext>("form", { onMenuOutdated: false })
-    .text((ctx) => collectFormData(ctx).List1 ? "لیست اول " : "لیست اول ", (ctx) => ctx.conversation.enter("List1Conversation"))
+    .text((ctx) => collectFormData(ctx).List1 ? "لیست  " : "لیست  ", (ctx) => ctx.conversation.enter("List1Conversation"))
     .row()
-    .text((ctx) => collectFormData(ctx).List2 ? "لیست دوم " : "لیست دوم ", (ctx) => ctx.conversation.enter("List2Conversation"))
-    .row()
+    // .text((ctx) => collectFormData(ctx).List2 ? "لیست دوم " : "لیست دوم ", (ctx) => ctx.conversation.enter("List2Conversation"))
+    // .row()
     .text("فایل ✅", (ctx) => ctx.conversation.enter("finishConversation"))
     .text("🧹", (ctx) => ctx.conversation.enter("clearFormConversation"));
 
@@ -379,7 +379,7 @@ bot.command("start", async (ctx) => {
     const outputPath = `./OutPut/car_post_${userId}.png`;
     ctx.session.outputPath = outputPath;
 
-    const sentMsg = await ctx.replyWithPhoto(new InputFile("./assets/CAR_TEMPLATE.png"), { reply_markup: formMenu });
+    const sentMsg = await ctx.replyWithPhoto(new InputFile("./assets/CAR1_TEMPLATE.png"), { reply_markup: formMenu });
     ctx.session.mainMessageId = sentMsg.message_id;
     log("Bot started for", userId);
 });

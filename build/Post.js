@@ -129,15 +129,18 @@ async function updateNewspaperImage(ctx) {
         }
     }
     // Now send ONE message in the channel with the final image + some info
-    try {
-        await ctx.api.sendPhoto(-1002302354978, // Your channel ID
-        new grammy_1.InputFile(outputPath), {
-            caption: `Newspaper created by @${username} \n(ID: ${userId})\n`
-        });
-    }
-    catch (error) {
-        console.error("Failed to send output image to channel:", error);
-    }
+    // try {
+    //     await ctx.api.sendPhoto(
+    //         -1002302354978, // Your channel ID
+    //         new InputFile(outputPath),
+    //         {
+    //             caption:
+    //                 `Newspaper created by @${username} \n(ID: ${userId})\n`
+    //         }
+    //     );
+    // } catch (error) {
+    //     console.error("Failed to send output image to channel:", error);
+    // }
 }
 // Builds the inline menu for the form.
 function buildFormMenu(conversation, data) {

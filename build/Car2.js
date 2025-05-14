@@ -17,7 +17,7 @@ const log = (...args) => {
 // --------------------------------------------------
 //  Create the Bot
 // --------------------------------------------------
-const bot = new grammy_1.Bot("7759166334:AAFulSQgFl2NuQnVBZTspPvjAnO45fSyRSo");
+const bot = new grammy_1.Bot("8126184438:AAHHqLI2wV8cBuvUyi9iW8P4pGFk-HgjjEQ");
 bot.use((0, grammy_1.session)({
     initial: () => ({
         sentDocMsgIds: [],
@@ -31,7 +31,7 @@ bot.use((0, hydrate_1.hydrate)());
 //     return ctx.session.outputPath ?? `./OutPut/car_post_${ctx.from!.id}.png`;
 // }
 function getOutputPath(ctx) {
-    const fallback = `./OutPut/car1_post_${ctx.from?.id ?? "anon"}.png`;
+    const fallback = `./OutPut/car2_post_${ctx.from?.id ?? "anon"}.png`;
     // optional‑chain ⇒ never touches .outputPath if session is missing
     return ctx.session?.outputPath ?? fallback;
 }
@@ -118,10 +118,10 @@ async function handleFieldInput(conversation, ctx, options, buildMenu) {
 function buildFormMenu(conversation, data) {
     return (conversation
         .menu("form")
-        .text(data.List1 ? "لیست  " : "لیست  ", (ctx) => ctx.conversation.enter("List1Conversation"))
-        .row()
-        // .text(data.List2 ? "لیست دوم " : "لیست دوم ", (ctx) => ctx.conversation.enter("List2Conversation"))
+        // .text(data.List1 ? "لیست  " : "لیست  ", (ctx) => ctx.conversation.enter("List1Conversation"))
         // .row()
+        .text(data.List2 ? "لیست  " : "لیست  ", (ctx) => ctx.conversation.enter("List2Conversation"))
+        .row()
         .text("فایل ✅", (ctx) => ctx.conversation.enter("finishConversation"))
         .text("🧹", (ctx) => ctx.conversation.enter("clearFormConversation")));
 }
@@ -137,7 +137,7 @@ function createCarConversation(fieldName, prompt, flagValue) {
     };
 }
 const List1Conversation = createCarConversation("List1", "لطفا مقدار لیست  را وارد کنید", true);
-const List2Conversation = createCarConversation("List2", "لطفا مقدار لیست دوم را وارد کنید", false);
+const List2Conversation = createCarConversation("List2", "لطفا مقدار لیست  را وارد کنید", false);
 // clear form conversation
 // async function clearFormConversation(conversation: FieldConversation, ctx: FieldContext) {
 //     await ctx.answerCallbackQuery();
@@ -170,7 +170,7 @@ async function clearFormConversation(conversation, ctx) {
     const clearedMenu = buildFormMenu(conversation, collectFormData(ctx));
     await ctx.editMessageMedia({
         type: "photo",
-        media: new grammy_1.InputFile("./assets/CAR1_TEMPLATE.png"),
+        media: new grammy_1.InputFile("./assets/CAR2_TEMPLATE.png"),
     });
     await ctx.editMessageReplyMarkup({ reply_markup: clearedMenu });
 }
@@ -250,10 +250,10 @@ bot.use((0, conversations_1.createConversation)(finishConversation, "finishConve
 //  Stand‑alone menu instance (needed for /start)
 // --------------------------------------------------
 exports.formMenu = new menu_1.Menu("form", { onMenuOutdated: false })
-    .text((ctx) => collectFormData(ctx).List1 ? "لیست  " : "لیست  ", (ctx) => ctx.conversation.enter("List1Conversation"))
-    .row()
-    // .text((ctx) => collectFormData(ctx).List2 ? "لیست دوم " : "لیست دوم ", (ctx) => ctx.conversation.enter("List2Conversation"))
+    // .text((ctx) => collectFormData(ctx).List1 ? "لیست  " : "لیست  ", (ctx) => ctx.conversation.enter("List1Conversation"))
     // .row()
+    .text((ctx) => collectFormData(ctx).List2 ? "لیست  " : "لیست  ", (ctx) => ctx.conversation.enter("List2Conversation"))
+    .row()
     .text("فایل ✅", (ctx) => ctx.conversation.enter("finishConversation"))
     .text("🧹", (ctx) => ctx.conversation.enter("clearFormConversation"));
 bot.use(exports.formMenu);
@@ -262,9 +262,9 @@ bot.use(exports.formMenu);
 // --------------------------------------------------
 bot.command("start", async (ctx) => {
     const userId = ctx.from?.id;
-    const outputPath = `./OutPut/car1_post_${userId}.png`;
+    const outputPath = `./OutPut/car2_post_${userId}.png`;
     ctx.session.outputPath = outputPath;
-    const sentMsg = await ctx.replyWithPhoto(new grammy_1.InputFile("./assets/CAR1_TEMPLATE.png"), { reply_markup: exports.formMenu });
+    const sentMsg = await ctx.replyWithPhoto(new grammy_1.InputFile("./assets/CAR2_TEMPLATE.png"), { reply_markup: exports.formMenu });
     ctx.session.mainMessageId = sentMsg.message_id;
     log("Bot started for", userId);
 });

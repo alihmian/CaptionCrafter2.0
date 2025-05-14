@@ -75,7 +75,7 @@ interface FormData {
 function getOutputPath(
     ctx: Context & { from?: any; session?: Partial<SessionData> },
 ): string {
-    const fallback = `./OutPut/car_post_${ctx.from?.id ?? "anon"}.png`;
+    const fallback = `./OutPut/car1_post_${ctx.from?.id ?? "anon"}.png`;
     // optional‑chain ⇒ never touches .outputPath if session is missing
     return (ctx as any).session?.outputPath ?? fallback;
 }
@@ -376,7 +376,7 @@ bot.use(formMenu);
 
 bot.command("start", async (ctx) => {
     const userId = ctx.from?.id;
-    const outputPath = `./OutPut/car_post_${userId}.png`;
+    const outputPath = `./OutPut/car1_post_${userId}.png`;
     ctx.session.outputPath = outputPath;
 
     const sentMsg = await ctx.replyWithPhoto(new InputFile("./assets/CAR1_TEMPLATE.png"), { reply_markup: formMenu });

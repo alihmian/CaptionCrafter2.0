@@ -170,7 +170,7 @@ async function clearFormConversation(conversation, ctx) {
     const clearedMenu = buildFormMenu(conversation, collectFormData(ctx));
     await ctx.editMessageMedia({
         type: "photo",
-        media: new grammy_1.InputFile("./assets/GOLD_TEMPLATE.png"),
+        media: new grammy_1.InputFile("./assets/CAR_TEMPLATE.png"),
     });
     await ctx.editMessageReplyMarkup({ reply_markup: clearedMenu });
 }

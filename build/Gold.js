@@ -120,7 +120,7 @@ async function handleFieldInput(conversation, ctx, options, buildMenu) {
 function buildFormMenu(conversation, data) {
     return (conversation
         .menu("form")
-        .text(data.Gold ? "طلا " : "طلا ", (ctx) => ctx.conversation.enter("GoldConversation"))
+        .text(data.Gold ? "مثقال طلا  " : " مثقال طلا ", (ctx) => ctx.conversation.enter("GoldConversation"))
         .row()
         .text(data.Coin ? "سکه " : "سکه ", (ctx) => ctx.conversation.enter("CoinConversation"))
         .row()
@@ -143,7 +143,7 @@ function createCurrencyConversation(fieldName, prompt) {
         await handleFieldInput(conversation, ctx, { fieldName, promptMessage: prompt }, buildFormMenu);
     };
 }
-const GoldConversation = createCurrencyConversation("Gold", "لطفا مقدار طلا را وارد کنید");
+const GoldConversation = createCurrencyConversation("Gold", "لطفا مقدار  مثقال طلا  را وارد کنید");
 const CoinConversation = createCurrencyConversation("Coin", "لطفا مقدار سکه را وارد کنید");
 const HalfCoinConversation = createCurrencyConversation("HalfCoin", "لطفا مقدار نیم‌سکه را وارد کنید");
 const QuarterCoinConversation = createCurrencyConversation("QuarterCoin", "لطفا مقدار ربع‌سکه را وارد کنید");
@@ -201,7 +201,7 @@ bot.use((0, conversations_1.createConversation)(finishConversation, "finishConve
 //  Stand‑alone menu instance (needed for /start)
 // --------------------------------------------------
 exports.formMenu = new menu_1.Menu("form", { onMenuOutdated: false })
-    .text((ctx) => collectFormData(ctx).Gold ? "طلا " : "طلا ", (ctx) => ctx.conversation.enter("GoldConversation"))
+    .text((ctx) => collectFormData(ctx).Gold ? " مثقال طلا " : " مثقال طلا ", (ctx) => ctx.conversation.enter("GoldConversation"))
     .row()
     .text((ctx) => collectFormData(ctx).Coin ? "سکه " : "سکه ", (ctx) => ctx.conversation.enter("CoinConversation"))
     .row()

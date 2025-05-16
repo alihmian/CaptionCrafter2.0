@@ -216,7 +216,7 @@ function buildFormMenu(conversation: Conversation<MyContext, any>, data: FormDat
             .row()
             .text(data.Lira ? "لیر " : "لیر ", (ctx) => ctx.conversation.enter("liraConversation"))
             .row()
-            .text(data.Dinar ? "دینار " : "دینار ", (ctx) => ctx.conversation.enter("dinarConversation"))
+            .text(data.Dinar ? "دینار عراق " : "دینار عراق ", (ctx) => ctx.conversation.enter("dinarConversation"))
             .row()
             .text(data.Dirham ? "درهم " : "درهم ", (ctx) => ctx.conversation.enter("dirhamConversation"))
             .row()
@@ -241,7 +241,7 @@ function createCurrencyConversation(fieldName: CurrencyField, prompt: string) {
 const dollarConversation = createCurrencyConversation("Dollar", "لطفا مقدار دلار را وارد کنید");
 const euroConversation = createCurrencyConversation("Euro", "لطفا مقدار یورو را وارد کنید");
 const liraConversation = createCurrencyConversation("Lira", "لطفا مقدار لیر را وارد کنید");
-const dinarConversation = createCurrencyConversation("Dinar", "لطفا مقدار دینار را وارد کنید");
+const dinarConversation = createCurrencyConversation("Dinar", "لطفا مقدار دینار عراق را وارد کنید");
 const dirhamConversation = createCurrencyConversation("Dirham", "لطفا مقدار درهم را وارد کنید");
 const yuanConversation = createCurrencyConversation("ChineseYuan", "لطفا مقدار یوان چین را وارد کنید");
 const riyalConversation = createCurrencyConversation("SaudiRiyal", "لطفا مقدار ریال سعودی را وارد کنید");
@@ -344,7 +344,7 @@ export const formMenu = new Menu<MyContext>("form", { onMenuOutdated: false })
     .row()
     .text((ctx) => collectFormData(ctx).Lira ? "لیر " : "لیر ", (ctx) => ctx.conversation.enter("liraConversation"))
     .row()
-    .text((ctx) => collectFormData(ctx).Dinar ? "دینار " : "دینار ", (ctx) => ctx.conversation.enter("dinarConversation"))
+    .text((ctx) => collectFormData(ctx).Dinar ? "دینار عراق " : "دینار عراق ", (ctx) => ctx.conversation.enter("dinarConversation"))
     .row()
     .text((ctx) => collectFormData(ctx).Dirham ? "درهم " : "درهم ", (ctx) => ctx.conversation.enter("dirhamConversation"))
     .row()

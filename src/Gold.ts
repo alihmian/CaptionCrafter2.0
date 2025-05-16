@@ -207,7 +207,7 @@ function buildFormMenu(conversation: Conversation<MyContext, any>, data: FormDat
     return (
         conversation
             .menu("form")
-            .text(data.Gold ? "طلا " : "طلا ", (ctx) => ctx.conversation.enter("GoldConversation"))
+            .text(data.Gold ? "مثقال طلا  " : " مثقال طلا ", (ctx) => ctx.conversation.enter("GoldConversation"))
             .row()
             .text(data.Coin ? "سکه " : "سکه ", (ctx) => ctx.conversation.enter("CoinConversation"))
             .row()
@@ -233,7 +233,7 @@ function createCurrencyConversation(fieldName: CurrencyField, prompt: string) {
     };
 }
 
-const GoldConversation = createCurrencyConversation("Gold", "لطفا مقدار طلا را وارد کنید");
+const GoldConversation = createCurrencyConversation("Gold", "لطفا مقدار  مثقال طلا  را وارد کنید");
 const CoinConversation = createCurrencyConversation("Coin", "لطفا مقدار سکه را وارد کنید");
 const HalfCoinConversation = createCurrencyConversation("HalfCoin", "لطفا مقدار نیم‌سکه را وارد کنید");
 const QuarterCoinConversation = createCurrencyConversation("QuarterCoin", "لطفا مقدار ربع‌سکه را وارد کنید");
@@ -317,7 +317,7 @@ bot.use(createConversation(finishConversation, "finishConversation"));
 //  Stand‑alone menu instance (needed for /start)
 // --------------------------------------------------
 export const formMenu = new Menu<MyContext>("form", { onMenuOutdated: false })
-    .text((ctx) => collectFormData(ctx).Gold ? "طلا " : "طلا ", (ctx) => ctx.conversation.enter("GoldConversation"))
+    .text((ctx) => collectFormData(ctx).Gold ? " مثقال طلا " : " مثقال طلا ", (ctx) => ctx.conversation.enter("GoldConversation"))
     .row()
     .text((ctx) => collectFormData(ctx).Coin ? "سکه " : "سکه ", (ctx) => ctx.conversation.enter("CoinConversation"))
     .row()

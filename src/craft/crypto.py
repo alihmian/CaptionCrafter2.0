@@ -73,7 +73,7 @@ def create_crypto_post(
     }
 
     anchor = 312
-    height = 640
+    height = 650
     width = 150
     positions = {
         "Bitcoin": (anchor, height),
@@ -98,7 +98,7 @@ def create_crypto_post(
         color="white",
     )
 
-    font_size = 65
+    font_size = 50
     for key in [
         "Bitcoin",
         "Ethereum",
@@ -124,18 +124,18 @@ def create_crypto_post(
     base_img.convert("RGB").save(output_path, format="JPEG", quality=95)
 
 
-# if __name__ == "__main__":
-#     create_crypto_post(
-#         Bitcoin="3820000000",
-#         Ethereum="190000000",
-#         Tether="50000",
-#         Ripple="17000",
-#         BinanceCoin="12000000",
-#         Solana="6000000",
-#         USD_Coin="50000",
-#         Dogecoin="2000",
-#         output_path="./OutPut/test_crypto_output.jpeg"
-#     )
+if __name__ == "__main__":
+    create_crypto_post(
+        Bitcoin="382000000000",
+        Ethereum="190000000",
+        Tether="888888888888",
+        Ripple="17000",
+        BinanceCoin="12000000",
+        Solana="6000000",
+        USD_Coin="50000",
+        Dogecoin="2000",
+        output_path="./OutPut/test_crypto_output.jpeg"
+    )
 
 
 if __name__ == "__main__":

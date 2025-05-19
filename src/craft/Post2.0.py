@@ -114,7 +114,7 @@ def create_newspaper_image(
         max_font_size=45,
         color="black",
         is_rtl=DEFAULT_IS_RTL,
-        line_spacing=1.2,
+        line_spacing=1.4,
     )
     # Define positions for dates.
     y_anchor = 327

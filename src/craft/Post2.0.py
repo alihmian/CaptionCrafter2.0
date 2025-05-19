@@ -86,7 +86,7 @@ def create_newspaper_image(
         font_size=headline_size,
         color="black",
         is_rtl=False,
-        line_spacing=1.2,
+        line_spacing=1.5,
         max_font_size=55
     )
 
@@ -114,7 +114,7 @@ def create_newspaper_image(
         max_font_size=45,
         color="black",
         is_rtl=DEFAULT_IS_RTL,
-        line_spacing=1.4,
+        line_spacing=1.5,
     )
     # Define positions for dates.
     y_anchor = 327
@@ -229,15 +229,15 @@ if __name__ == "__main__":
         events_text=args.events_text,
     )
 
-# python "./src/Craft/Post.py" --user_image_path="./UserImages/img.png" --overline_text="سوخت قاچاق در خليج فارس" --main_headline_text="كشف محموله عظيم سوخت قاچاق درخليج فارس؛ ضربه سنگين به قاچاقچيان" --output_path="./OutPut/Post_output.png" --events_text=" "
+# python "./src/Craft/Post2.0.py" --user_image_path="./UserImages/img.png" --overline_text="سوخت قاچاق در خليج فارس" --main_headline_text="كشف محموله عظيم سوخت قاچاق درخليج فارس؛ ضربه سنگين به قاچاقچيان" --output_path="./OutPut/Post_output.png" --events_text=" "
 
-# python "./src/Craft/Post.py" --user_image_path="./UserImages/img.png" --overline_text="" --main_headline_text="كشف محموله عظيم سوخت قاچاق درخليج فارس؛ ضربه سنگين به قاچاقچيان" --output_path="./OutPut/Post_output.png" --events_text=" "
+# python "./src/Craft/Post2.0.py" --user_image_path="./UserImages/img.png" --overline_text="" --main_headline_text="كشف محموله عظيم سوخت قاچاق درخليج فارس؛ ضربه سنگين به قاچاقچيان" --output_path="./OutPut/Post_output.png" --events_text=" "
 
-# python "./src/Craft/Post.py" --user_image_path="./UserImages/img.png" --overline_text="سوخت قاچاق در خليج فارسوخت قاچاق در خليج فارسوخت قاچاق در خليج فارسوخت قاچاق در خليج فارس" --main_headline_text="كشف محموله عظيم سوخت قاچاق درخليج فارس؛ ضربه سنگين به قاچاقچيان" --output_path="./OutPut/Post_output.png" --events_text=" "
+# python "./src/Craft/Post2.0.py" --user_image_path="./UserImages/img.png" --overline_text="سوخت قاچاق در خليج فارسوخت قاچاق در خليج فارسوخت قاچاق در خليج فارسوخت قاچاق در خليج فارس" --main_headline_text="كشف محموله عظيم سوخت قاچاق درخليج فارس؛ ضربه سنگين به قاچاقچيان" --output_path="./OutPut/Post_output.png" --events_text=" "
 
-# python "./src/Craft/Post.py" --user_image_path="./UserImages/img.png" --overline_text="سوخت قاچاق در خليج فارس" --main_headline_text="كشف  محموله عظيم سوخت قاچاق درخليج فارس؛ ضربه سنگين بهمحموله عظيم سوخت قاچاق درخليج فارس؛ ضربه سنگين به قاچاقچيان" --output_path="./OutPut/Post_output.png" --events_text=" "
+# python "./src/Craft/Post2.0.py" --user_image_path="./UserImages/img.png" --overline_text="سوخت قاچاق در خليج فارس" --main_headline_text="كشف  محموله عظيم سوخت قاچاق درخليج فارس؛ ضربه سنگين بهمحموله عظيم سوخت قاچاق درخليج فارس؛ ضربه سنگين به قاچاقچيان" --output_path="./OutPut/Post_output.png" --events_text=" "
 
 
-# python "./src/Craft/Post.py" --user_image_path="./UserImages/img.png" --overline_text="" --main_headline_text="كشف  محموله عظيم سوخت قاچاق درخليج فارس؛ ضربه سنگين بهمحموله عظيم سوخت قاچاق درخليج فارس؛ ضربه سنگين به قاچاقچيان" --output_path="./OutPut/Post_output.png" --events_text=" "
+# python "./src/Craft/Post2.0.py" --user_image_path="./UserImages/img.png" --overline_text="" --main_headline_text="كشف  محموله عظيم سوخت قاچاق درخليج فارس؛ ضربه سنگين بهمحموله عظيم سوخت قاچاق درخليج فارس؛ ضربه سنگين به قاچاقچيان" --output_path="./OutPut/Post_output.png" --events_text=" "
 
-# python "./src/Craft/Post.py" --user_image_path="./UserImages/img.png" --overline_text="سوخت قاچاق در خليج فارسوخت قاچاق در خليج فارسوخت قاچاق در خليج فارسوخت قاچاق در خليج فارس" --main_headline_text="كشف  محموله عظيم سوخت قاچاق درخليج فارس؛ ضربه سنگين بهمحموله عظيم سوخت قاچاق درخليج فارس؛ ضربه سنگين به قاچاقچيان" --output_path="./OutPut/Post_output.png" --events_text=" "
+# python "./src/Craft/Post2.0.py" --user_image_path="./UserImages/img.png" --overline_text="سوخت قاچاق در خليج فارسوخت قاچاق در خليج فارسوخت قاچاق در خليج فارسوخت قاچاق در خليج فارس" --main_headline_text="كشف  محموله عظيم سوخت قاچاق درخليج فارس؛ ضربه سنگين بهمحموله عظيم سوخت قاچاق درخليج فارس؛ ضربه سنگين به قاچاقچيان" --output_path="./OutPut/Post_output.png" --events_text=" "

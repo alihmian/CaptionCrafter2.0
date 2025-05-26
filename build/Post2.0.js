@@ -48,7 +48,7 @@ const log = (...args) => {
 // ----------------------
 // Create the Bot
 // ----------------------
-const bot = new grammy_1.Bot("7572093455:AAF-uO2uHhwWbO584paHgBGj_uRr5pu8IL8");
+const bot = new grammy_1.Bot("8056950160:AAGIF7ColbOQH5wF6lhWC2HNAib5mb624K8");
 // Use session, conversations, and hydration middleware
 bot.use((0, grammy_1.session)({
     initial: () => ({

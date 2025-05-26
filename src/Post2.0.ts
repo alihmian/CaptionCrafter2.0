@@ -39,7 +39,7 @@ type FieldConversation = Conversation<MyContext, MyContext>;
 // ----------------------
 // Create the Bot
 // ----------------------
-const bot = new Bot<MyContext>("7572093455:AAF-uO2uHhwWbO584paHgBGj_uRr5pu8IL8");
+const bot = new Bot<MyContext>("8056950160:AAGIF7ColbOQH5wF6lhWC2HNAib5mb624K8");
 
 // Use session, conversations, and hydration middleware
 bot.use(session({

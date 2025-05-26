@@ -49,26 +49,31 @@ def create_newspaper_image(
     }
 
     # Add main headline text.
-    overline_height = 425
+    margin = 81
+
     x_shift = 5
     Overline = "".join(c for c in overline_text if not c.isspace())
     Events = "".join(c for c in events_text if not c.isspace())
-    margin = 81
     if Overline and Events:  # ✅
-        headline_box = (margin, 540 + x_shift, base_img.width - 2 * margin, 190)
+        headline_box = (margin, 545 + x_shift, base_img.width - 2 * margin, 170)
         verticalMode = "top_to_bottom"
+        overline_box = (margin, 445, base_img.width - 2 * margin, 80)
         overline_height = 440
 
     elif not Overline and Events:
         headline_box = (margin, 440 + x_shift, base_img.width - 2 * margin, 280)
         verticalMode = "center_expanded"
+        overline_box = (margin, 445, base_img.width - 2 * margin, 80)
+
     elif Overline and not Events:  # ✅
-        headline_box = (margin, 540 + x_shift, base_img.width - 2 * margin, 207)
+        headline_box = (margin, 522 + x_shift, base_img.width - 2 * margin, 193)
         verticalMode = "top_to_bottom"
+        overline_box = (margin, 420, base_img.width - 2 * margin, 80)
 
     else:  # ✅
-        headline_box = (margin, 390 + x_shift, base_img.width - 2 * margin, 373)
+        headline_box = (margin, 440 + x_shift, base_img.width - 2 * margin, 270)
         verticalMode = "center_expanded"
+        overline_box = (margin, 445, base_img.width - 2 * margin, 80)
 
     headline_size = 60 + main_headline_font_size_delta
     draw_text_in_box(
@@ -78,26 +83,80 @@ def create_newspaper_image(
         headline_box,
         alignment="center",
         vertical_mode=verticalMode,
-        auto_size=True,
+        auto_size=dynamic_font_size,
         font_size=headline_size,
         color="black",
         is_rtl=False,
-        line_spacing=1.2,
+        line_spacing=1.5,
+        max_font_size=55
     )
 
-    # Add overline text.
-    overline_size = 42 + overline_font_size_delta
-    draw_text_no_box(
+
+    draw_text_in_box(
         draw,
         overline_text,
         fonts["overline"],
-        base_img.width // 2,
-        overline_height,
+        overline_box,
         alignment="center",
-        font_size=overline_size,
+        vertical_mode="center_expanded",
+        auto_size=True,
+        max_font_size=45,
         color="black",
-        is_rtl=False,
+        is_rtl=DEFAULT_IS_RTL,
+        line_spacing=1.5,
     )
+    # overline_height = 425
+    # x_shift = 5
+    # Overline = "".join(c for c in overline_text if not c.isspace())
+    # Events = "".join(c for c in events_text if not c.isspace())
+    # margin = 81
+    # if Overline and Events:  # ✅
+    #     headline_box = (margin, 540 + x_shift, base_img.width - 2 * margin, 190)
+    #     verticalMode = "top_to_bottom"
+    #     overline_height = 440
+
+    # elif not Overline and Events:
+    #     headline_box = (margin, 440 + x_shift, base_img.width - 2 * margin, 280)
+    #     verticalMode = "center_expanded"
+    # elif Overline and not Events:  # ✅
+    #     headline_box = (margin, 540 + x_shift, base_img.width - 2 * margin, 207)
+    #     verticalMode = "top_to_bottom"
+
+    # else:  # ✅
+    #     headline_box = (margin, 390 + x_shift, base_img.width - 2 * margin, 373)
+    #     verticalMode = "center_expanded"
+
+    # headline_size = 60 + main_headline_font_size_delta
+    # draw_text_in_box(
+    #     draw,
+    #     main_headline_text,
+    #     fonts["headline"],
+    #     headline_box,
+    #     alignment="center",
+    #     vertical_mode=verticalMode,
+    #     auto_size=True,
+    #     font_size=headline_size,
+    #     color="black",
+    #     is_rtl=False,
+    #     line_spacing=1.2,
+    # )
+
+    # # Add overline text.
+    # overline_size = 42 + overline_font_size_delta
+    # draw_text_no_box(
+    #     draw,
+    #     overline_text,
+    #     fonts["overline"],
+    #     base_img.width // 2,
+    #     overline_height,
+    #     alignment="center",
+    #     font_size=overline_size,
+    #     color="black",
+    #     is_rtl=False,
+    # )
+
+
+
     draw_text_no_box(
         draw,
         source_text,

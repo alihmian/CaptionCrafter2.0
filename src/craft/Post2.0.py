@@ -90,19 +90,7 @@ def create_newspaper_image(
         max_font_size=55
     )
 
-    # # Add overline text.
-    # overline_size = 42 + overline_font_size_delta
-    # draw_text_no_box(
-    #     draw,
-    #     overline_text,
-    #     fonts["overline"],
-    #     base_img.width // 2,
-    #     overline_height,
-    #     alignment="center",
-    #     font_size=overline_size,
-    #     color="black",
-    #     is_rtl=False,
-    # )
+
     draw_text_in_box(
         draw,
         overline_text,

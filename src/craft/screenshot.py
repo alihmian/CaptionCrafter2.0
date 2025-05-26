@@ -54,24 +54,26 @@ def create_newspaper_image(
     x_shift = 5
     Overline = "".join(c for c in overline_text if not c.isspace())
     Events = "".join(c for c in events_text if not c.isspace())
+
+
     if Overline and Events:  # ✅
-        headline_box = (margin, 545 + x_shift, base_img.width - 2 * margin, 170)
+        headline_box = (margin, 545 + x_shift, base_img.width - 2 * margin, 160)
         verticalMode = "top_to_bottom"
         overline_box = (margin, 445, base_img.width - 2 * margin, 80)
         overline_height = 440
 
     elif not Overline and Events:
-        headline_box = (margin, 440 + x_shift, base_img.width - 2 * margin, 280)
+        headline_box = (margin, 440 + x_shift, base_img.width - 2 * margin, 270)
         verticalMode = "center_expanded"
         overline_box = (margin, 445, base_img.width - 2 * margin, 80)
 
     elif Overline and not Events:  # ✅
-        headline_box = (margin, 522 + x_shift, base_img.width - 2 * margin, 193)
+        headline_box = (margin, 522 + x_shift, base_img.width - 2 * margin, 183)
         verticalMode = "top_to_bottom"
         overline_box = (margin, 420, base_img.width - 2 * margin, 80)
 
     else:  # ✅
-        headline_box = (margin, 440 + x_shift, base_img.width - 2 * margin, 270)
+        headline_box = (margin, 440 + x_shift, base_img.width - 2 * margin, 260)
         verticalMode = "center_expanded"
         overline_box = (margin, 445, base_img.width - 2 * margin, 80)
 
@@ -83,7 +85,7 @@ def create_newspaper_image(
         headline_box,
         alignment="center",
         vertical_mode=verticalMode,
-        auto_size=dynamic_font_size,
+        auto_size=True,
         font_size=headline_size,
         color="black",
         is_rtl=False,
@@ -236,16 +238,18 @@ def create_newspaper_image(
     base_img.convert("RGB").save(output_path, format="JPEG", quality=95)
 
 
-if __name__ == "__main__":
-    # Example usage in non-composed mode (function does full composition)
-    create_newspaper_image(
-        user_image_path="UserImages/img.png",
-        overline_text="سوخت قاچاق در خليج فارس",
-        main_headline_text=" لغو تحريم مسيرهاى ترانزيتى ايران پتانسيل بالاى راه آهن براى ارزآورى",
-        source_text="Tqwewittter",
-        output_path="./OutPut/Screenshot_output.png",
-        dynamic_font_size=True,
-    )
+# if __name__ == "__main__":
+#     # Example usage in non-composed mode (function does full composition)
+#     create_newspaper_image(
+#         user_image_path="UserImages/img.png",
+#         overline_text="سوخت قاچاق در خليج فارس",
+#         main_headline_text=" لغو تحريم مسيرهاى ترانزيتى ايران پتانسيل بالاى راه آهن براى ارزآورى",
+#         source_text="Tqwewittter",
+#         output_path="./OutPut/Screenshot_output.png",
+#         dynamic_font_size=True,
+#     )
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Generate a newspaper-style image with text overlays and optional watermark."

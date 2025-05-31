@@ -1,6 +1,6 @@
 from PIL import Image, ImageDraw
 from text_utils import draw_text_no_box, draw_text_in_box
-from date_util import shamsi, arabic, georgian, day_of_week, clock_time
+from date_util import shamsi, georgian, day_of_week, clock_time
 import argparse
 
 DEFAULT_IS_RTL: bool = False
@@ -41,28 +41,34 @@ def create_newspaper_image(
         "time": "./Fonts/Time-Normal.ttf",
     }
     # Add main headline text.
-    overline_height = 425
+    margin = 81
+
     x_shift = 5
     Overline = "".join(c for c in overline_text if not c.isspace())
     Events = "".join(c for c in events_text if not c.isspace())
-    margin = 81
+
     if Overline and Events:  # ✅
-        headline_box = (margin, 540 + x_shift, base_img.width - 2 * margin, 190)
+        headline_box = (margin, 545 + x_shift, base_img.width - 2 * margin, 160)
         verticalMode = "top_to_bottom"
+        overline_box = (margin, 445, base_img.width - 2 * margin, 80)
         overline_height = 440
 
     elif not Overline and Events:
-        headline_box = (margin, 440 + x_shift, base_img.width - 2 * margin, 280)
+        headline_box = (margin, 440 + x_shift, base_img.width - 2 * margin, 270)
         verticalMode = "center_expanded"
+        overline_box = (margin, 445, base_img.width - 2 * margin, 80)
+
     elif Overline and not Events:  # ✅
-        headline_box = (margin, 540 + x_shift, base_img.width - 2 * margin, 207)
+        headline_box = (margin, 522 + x_shift, base_img.width - 2 * margin, 183)
         verticalMode = "top_to_bottom"
+        overline_box = (margin, 420, base_img.width - 2 * margin, 80)
 
     else:  # ✅
-        headline_box = (margin, 390 + x_shift, base_img.width - 2 * margin, 373)
+        headline_box = (margin, 440 + x_shift, base_img.width - 2 * margin, 260)
         verticalMode = "center_expanded"
+        overline_box = (margin, 445, base_img.width - 2 * margin, 80)
 
-    headline_size = 100 + main_headline_font_size_delta
+    headline_size = 60 + main_headline_font_size_delta
     draw_text_in_box(
         draw,
         main_headline_text,
@@ -70,26 +76,26 @@ def create_newspaper_image(
         headline_box,
         alignment="center",
         vertical_mode=verticalMode,
-        auto_size=dynamic_font_size,
+        auto_size=True,
         font_size=headline_size,
         color="white",
         is_rtl=False,
-        line_spacing=1.2,
-        max_font_size=65
+        line_spacing=1.5,
+        max_font_size=55,
     )
 
-    # Add overline text.
-    overline_size = 42 + overline_font_size_delta
-    draw_text_no_box(
+    draw_text_in_box(
         draw,
         overline_text,
         fonts["overline"],
-        base_img.width // 2,
-        overline_height,
+        overline_box,
         alignment="center",
-        font_size=overline_size,
+        vertical_mode="center_expanded",
+        auto_size=True,
+        max_font_size=45,
         color="white",
-        is_rtl=False,
+        is_rtl=DEFAULT_IS_RTL,
+        line_spacing=1.5,
     )
 
     # Define positions for dates.
@@ -107,16 +113,6 @@ def create_newspaper_image(
 
     # Draw date texts.
 
-    draw_text_no_box(
-        draw,
-        arabic(year=True, month=True, day=True, days_into_future=days_into_future),
-        fonts["arabic_date"],
-        *positions["arabic_date"],
-        alignment="center",
-        font_size=date_font_size,
-        is_rtl=DEFAULT_IS_RTL,
-        color=date_color,
-    )
     draw_text_no_box(
         draw,
         georgian(year=True, month=True, day=True, days_into_future=days_into_future),
@@ -159,8 +155,8 @@ def create_newspaper_image(
 #     # Example usage in non-composed mode (function does full composition)
 #     create_newspaper_image(
 #         user_image_path="UserImages/img.png",
-#         overline_text="سوخت قاچاق در خليج فارس",
-#         main_headline_text="ترامپ با سفر به تهران با آقاى پزشكيان ديدار مى كند",
+#         overline_text="سوختوخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فار قاچاق در خليج فارس",
+#         main_headline_text="ترامپ با سفر به تهران باوخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فار آقاى پزشكيان ديدار مى كند",
 #         output_path="./OutPut/BreakingNews_output.png",
 #         dynamic_font_size=True,
 #     )

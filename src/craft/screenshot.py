@@ -195,22 +195,7 @@ def create_newspaper_image(
         color=date_color
     )
 
-    draw_text_no_box(
-        draw,
-        arabic(
-            year=True,
-            month=True,
-            day=True,
-            days_into_future=days_into_future,
-            language="arabic",
-        ),
-        fonts["arabic_date"],
-        *positions["arabic_date"],
-        alignment="center",
-        font_size=date_font_size,
-        is_rtl=DEFAULT_IS_RTL,
-        color=date_color
-    )
+
     draw_text_no_box(
         draw,
         georgian(year=True, month=True, day=True, days_into_future=days_into_future),

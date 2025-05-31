@@ -1,6 +1,6 @@
 from PIL import Image, ImageDraw
 from text_utils import draw_text_no_box, draw_text_in_box
-from date_util import shamsi, arabic, georgian, day_of_week
+from date_util import shamsi,  georgian, day_of_week
 import argparse
 
 DEFAULT_IS_RTL: bool = False
@@ -87,9 +87,8 @@ def create_newspaper_image(
         color="black",
         is_rtl=False,
         line_spacing=1.5,
-        max_font_size=55
+        max_font_size=55,
     )
-
 
     draw_text_in_box(
         draw,
@@ -129,22 +128,7 @@ def create_newspaper_image(
         color=date_color
     )
 
-    draw_text_no_box(
-        draw,
-        arabic(
-            year=True,
-            month=True,
-            day=True,
-            days_into_future=days_into_future,
-            language="arabic",
-        ),
-        fonts["arabic_date"],
-        *positions["arabic_date"],
-        alignment="center",
-        font_size=date_font_size,
-        is_rtl=DEFAULT_IS_RTL,
-        color=date_color
-    )
+
     draw_text_no_box(
         draw,
         georgian(year=True, month=True, day=True, days_into_future=days_into_future),

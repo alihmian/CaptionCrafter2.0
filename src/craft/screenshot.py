@@ -1,6 +1,6 @@
 from PIL import Image, ImageDraw
 from text_utils import draw_text_no_box, draw_text_in_box
-from date_util import shamsi, arabic, georgian, day_of_week
+from date_util import shamsi,  georgian, day_of_week
 import argparse
 
 DEFAULT_IS_RTL: bool = False
@@ -227,7 +227,7 @@ def create_newspaper_image(
 #     # Example usage in non-composed mode (function does full composition)
 #     create_newspaper_image(
 #         user_image_path="UserImages/img.png",
-#         overline_text="سوخت قاچاق در خليج فارس",
+#         overline_text="سوخت قاچاق در خليج فوخت قاچاق در خليج فوخت قاچاق در خليج فوخت قاچاق در خليج فوخت قاچاق در خليج فوخت قاچاق در خليج فوخت وخت قاچاق در خليج فقاچاق در خليج فارس",
 #         main_headline_text=" لغو تحريم مسيرهاى ترانزيتى ايران پتانسيل بالاى راه آهن براى ارزآورى",
 #         source_text="Tqwewittter",
 #         output_path="./OutPut/Screenshot_output.png",

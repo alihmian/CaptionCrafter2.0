@@ -5,6 +5,14 @@ from typing import Optional
 from convertdate import persian, islamic
 from zoneinfo import ZoneInfo
 
+# new imports
+from datetime import datetime, timedelta
+from typing import Literal
+from timeir import hijri_date  # ➟ Tehran tables
+
+from convertdate import islamic  # tabular/civil
+from convertdate import islamic_umalqura as uaq  # Saudi Umm-al-Qurā
+
 
 # Helper: Convert Western digits in a string to Farsi numerals
 def to_farsi_numerals(text: str) -> str:
@@ -185,6 +193,7 @@ def arabic(
     month: bool,
     day: bool,
     language: str = "arabic",
+    calendar: Literal["ksa", "iran", "civil"] = "iran",
     date: Optional[datetime] = None,
     days_into_future: int = 0,
     separator: str = " ",
@@ -200,7 +209,16 @@ def arabic(
         date = datetime.now()
     date += timedelta(days=days_into_future)
 
-    i_year, i_month, i_day = islamic.from_gregorian(date.year, date.month, date.day)
+    # --- 1. pick the correct converter -------------------------------------
+    if calendar == "iran":
+        i_year, i_month, i_day = hijri_date(date)  # time.ir
+    elif calendar == "ksa":
+        i_year, i_month, i_day = uaq.from_gregorian(date.year, date.month, date.day)
+    else:  # pure arithmetic
+        i_year, i_month, i_day = islamic.from_gregorian(date.year, date.month, date.day)
+
+
+
     components = []
     if day:
         day_str = str(i_day)

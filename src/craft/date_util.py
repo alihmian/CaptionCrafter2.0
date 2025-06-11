@@ -1,9 +1,22 @@
 # date_util.py
 
 from datetime import datetime, timedelta
-from typing import Optional
+from typing import Optional, Literal
 from convertdate import persian, islamic
 from zoneinfo import ZoneInfo
+
+# optional imports used by `arabic` – keep optional so the module can be
+# imported even if the dependencies are missing.  The functions are only used
+# when `arabic` is called.
+try:
+    from umalqurra.hijri_date import HijriDate as _Umalqurra
+except Exception:  # pragma: no cover - library might be absent at runtime
+    _Umalqurra = None
+
+try:
+    from timeir import hijri_date as _timeir_hijri_date
+except Exception:  # pragma: no cover - library might be absent at runtime
+    _timeir_hijri_date = None
 
 
 
@@ -181,75 +194,74 @@ def georgian(
     return separator.join(components)
 
 
-# def arabic(
-#     year: bool,
-#     month: bool,
-#     day: bool,
-#     language: str = "arabic",
-#     calendar: Literal["ksa", "iran", "civil"] = "iran",
-#     date: Optional[datetime] = None,
-#     days_into_future: int = 0,
-#     separator: str = " ",
-#     month_format: str = "name",
-#     **kwargs,
-# ) -> str:
-#     """
-#     Returns a formatted Islamic (Arabic) date string, offset by a specified number of days.
-#     The month_format parameter allows numeric ("number") or textual ("name") month output.
-#     Numeric parts are converted to Farsi digits when language is "farsi".
-#     """
-#     if date is None:
-#         date = datetime.now()
-#     date += timedelta(days=days_into_future)
+def arabic(
+    year: bool,
+    month: bool,
+    day: bool,
+    language: str = "arabic",
+    calendar: Literal["ksa", "iran", "civil"] = "iran",
+    date: Optional[datetime] = None,
+    days_into_future: int = 0,
+    separator: str = " ",
+    month_format: str = "name",
+    **kwargs,
+) -> str:
+    """Return an Islamic (Hijri) date string.
 
-#     # --- 1. pick the correct converter -------------------------------------
-#     if calendar == "iran":
-#         i_year, i_month, i_day = hijri_date(date)  # time.ir
-#     elif calendar == "ksa":
-#         i_year, i_month, i_day = uaq.from_gregorian(date.year, date.month, date.day)
-#     else:  # pure arithmetic
-#         i_year, i_month, i_day = islamic.from_gregorian(date.year, date.month, date.day)
+    Parameters mirror ``georgian``/``shamsi`` for consistency.  The ``calendar``
+    argument controls which conversion method is used:
 
+    ``"iran"`` – use :mod:`timeir` to match the date shown on `time.ir`.
+    ``"ksa"``  – use the Umm al-Qura calendar via :mod:`umalqurra`.
+    ``"civil"`` – use the arithmetic algorithm from :mod:`convertdate`.
+    """
 
+    if date is None:
+        date = datetime.now()
+    date += timedelta(days=days_into_future)
 
-#     components = []
-#     if day:
-#         day_str = str(i_day)
-#         if language.lower() == "farsi":
-#             day_str = to_farsi_numerals(day_str)
-#         elif language.lower() == "arabic":
-#             day_str = to_arabic_numerals(day_str)
-#         components.append(day_str)
-#     if month:
-#         if month_format.lower() == "name":
-#             if language.lower() == "english":
+    # --- 1. pick the correct converter ------------------------------------
+    if calendar == "iran" and _timeir_hijri_date is not None:
+        i_year, i_month, i_day = _timeir_hijri_date(date)
+    elif calendar == "ksa" and _Umalqurra is not None:
+        conv = _Umalqurra.from_georgian(date.year, date.month, date.day)
+        i_year, i_month, i_day = conv.year, conv.month, conv.day
+    else:  # fallback to arithmetic algorithm
+        i_year, i_month, i_day = islamic.from_gregorian(date.year, date.month, date.day)
 
-#                 try:
-#                     month_name = english_islamic_months[i_month - 1]
-#                 except IndexError:
-#                     month_name = str(i_month)
-#             else:
-#                 try:
-#                     month_name = farsi_islamic_months[i_month - 1]
-#                 except IndexError:
-#                     month_name = str(i_month)
-#             components.append(month_name)
-#         else:
-#             m_str = str(i_month)
-#             if language.lower() == "farsi":
-#                 m_str = to_farsi_numerals(m_str)
-#             elif language.lower() == "arabic":
-#                 m_str = to_arabic_numerals(m_str)
-#             components.append(m_str)
+    components = []
+    if day:
+        day_str = str(i_day)
+        if language.lower() == "farsi":
+            day_str = to_farsi_numerals(day_str)
+        elif language.lower() == "arabic":
+            day_str = to_arabic_numerals(day_str)
+        components.append(day_str)
 
-#     if year:
-#         year_str = str(i_year)
-#         if language.lower() == "farsi":
-#             year_str = to_farsi_numerals(year_str)
-#         elif language.lower() == "arabic":  # NEW
-#             year_str = to_arabic_numerals(year_str)  # NEW
-#         components.append(year_str)
-#     return separator.join(components)
+    if month:
+        if month_format.lower() == "name":
+            if language.lower() == "english":
+                month_name = english_islamic_months[i_month - 1] if 0 < i_month <= len(english_islamic_months) else str(i_month)
+            else:
+                month_name = farsi_islamic_months[i_month - 1] if 0 < i_month <= len(farsi_islamic_months) else str(i_month)
+            components.append(month_name)
+        else:
+            m_str = str(i_month)
+            if language.lower() == "farsi":
+                m_str = to_farsi_numerals(m_str)
+            elif language.lower() == "arabic":
+                m_str = to_arabic_numerals(m_str)
+            components.append(m_str)
+
+    if year:
+        year_str = str(i_year)
+        if language.lower() == "farsi":
+            year_str = to_farsi_numerals(year_str)
+        elif language.lower() == "arabic":
+            year_str = to_arabic_numerals(year_str)
+        components.append(year_str)
+
+    return separator.join(components)
 
 
 def shamsi(

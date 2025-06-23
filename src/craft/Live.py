@@ -1,9 +1,10 @@
 from PIL import Image, ImageDraw
 from text_utils import draw_text_no_box, draw_text_in_box
-from date_util import shamsi, georgian, day_of_week
+from date_util import shamsi, georgian, day_of_week, arabic
 import argparse
 
 DEFAULT_IS_RTL: bool = False
+arabic_days_into_future = 1
 
 
 def create_newspaper_image(
@@ -128,9 +129,24 @@ def create_newspaper_image(
         alignment="center",
         font_size=date_font_size,
         is_rtl=DEFAULT_IS_RTL,
-        color=date_color
+        color=date_color,
     )
-
+    draw_text_no_box(
+        draw,
+        arabic(
+            year=True,
+            month=True,
+            day=True,
+            days_into_future=arabic_days_into_future,
+            language="arabic",
+        ),
+        fonts["arabic_date"],
+        *positions["arabic_date"],
+        alignment="center",
+        font_size=date_font_size,
+        is_rtl=DEFAULT_IS_RTL,
+        color=date_color,
+    )
     draw_text_no_box(
         draw,
         georgian(year=True, month=True, day=True, days_into_future=days_into_future),
@@ -138,7 +154,7 @@ def create_newspaper_image(
         *positions["english_date"],
         alignment="left",
         font_size=date_font_size,
-        color=date_color
+        color=date_color,
     )
     draw_text_no_box(
         draw,
@@ -150,7 +166,7 @@ def create_newspaper_image(
         alignment="right",
         font_size=date_font_size,
         is_rtl=DEFAULT_IS_RTL,
-        color=date_color
+        color=date_color,
     )
 
     # Save the final image.
@@ -165,7 +181,7 @@ def create_newspaper_image(
 #         overline_text="سوخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فارس",
 #         main_headline_text=" لغو تحريم مسيرهاى ترانزيتى ايران پتانسيلوخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فار بالاى راه آهن براى ارزآورى",
 #         source_text="Tqwewittter",
-#         output_path="./OutPut/Screenshot_output.png",
+#         output_path="./OutPut/Live_output.png",
 #         dynamic_font_size=True,
 #     )
 
@@ -186,7 +202,9 @@ if __name__ == "__main__":
     parser.add_argument(
         "--main_headline_text", type=str, required=True, help="The main headline text."
     )
-    parser.add_argument("--source_text", type=str, required=True, help="The source text.")
+    parser.add_argument(
+        "--source_text", type=str, required=True, help="The source text."
+    )
     parser.add_argument(
         "--output_path", type=str, required=True, help="Path to save the final image."
     )

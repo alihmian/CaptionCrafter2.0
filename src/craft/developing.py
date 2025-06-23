@@ -4,6 +4,7 @@ from date_util import shamsi, arabic, georgian, day_of_week
 import argparse
 
 DEFAULT_IS_RTL: bool = False
+arabic_days_into_future = 1
 
 
 def create_newspaper_image(
@@ -46,28 +47,26 @@ def create_newspaper_image(
         "time": "./Fonts/Time-Normal.ttf",
     }
 
-
-
     # Add main headline text.
     overline_height = 425
     x_shift = 5
     Overline = "".join(c for c in overline_text if not c.isspace())
     Events = "".join(c for c in events_text if not c.isspace())
     margin = 81
-    if Overline and Events:                                             # ✅
+    if Overline and Events:  # ✅
         headline_box = (margin, 540 + x_shift, base_img.width - 2 * margin, 190)
         verticalMode = "top_to_bottom"
         overline_height = 440
-        
-    elif not Overline and Events:                                       
+
+    elif not Overline and Events:
         headline_box = (margin, 440 + x_shift, base_img.width - 2 * margin, 280)
         verticalMode = "center_expanded"
-    elif Overline and not Events:                                       # ✅
-        headline_box = (margin, 540 + x_shift, base_img.width - 2 * margin, 207)  
+    elif Overline and not Events:  # ✅
+        headline_box = (margin, 540 + x_shift, base_img.width - 2 * margin, 207)
         verticalMode = "top_to_bottom"
 
-    else:                                                               # ✅
-        headline_box = (margin, 390 + x_shift, base_img.width - 2 * margin, 373)  
+    else:  # ✅
+        headline_box = (margin, 390 + x_shift, base_img.width - 2 * margin, 373)
         verticalMode = "center_expanded"
 
     headline_size = 60 + main_headline_font_size_delta
@@ -92,7 +91,7 @@ def create_newspaper_image(
         overline_text,
         fonts["overline"],
         base_img.width // 2,
-        overline_height ,
+        overline_height,
         alignment="center",
         font_size=overline_size,
         color="black",
@@ -120,18 +119,24 @@ def create_newspaper_image(
         alignment="center",
         font_size=date_font_size,
         is_rtl=DEFAULT_IS_RTL,
-        color=date_color
+        color=date_color,
     )
 
     draw_text_no_box(
         draw,
-        arabic(year=True, month=True, day=True, days_into_future=days_into_future, language="arabic"),
+        arabic(
+            year=True,
+            month=True,
+            day=True,
+            days_into_future=arabic_days_into_future,
+            language="arabic",
+        ),
         fonts["arabic_date"],
         *positions["arabic_date"],
         alignment="center",
         font_size=date_font_size,
         is_rtl=DEFAULT_IS_RTL,
-        color=date_color
+        color=date_color,
     )
     draw_text_no_box(
         draw,
@@ -140,7 +145,7 @@ def create_newspaper_image(
         *positions["english_date"],
         alignment="left",
         font_size=date_font_size,
-        color=date_color
+        color=date_color,
     )
 
     draw_text_no_box(
@@ -153,7 +158,7 @@ def create_newspaper_image(
         alignment="right",
         font_size=date_font_size,
         is_rtl=DEFAULT_IS_RTL,
-        color=date_color
+        color=date_color,
     )
 
     # Save the final image.
@@ -167,43 +172,43 @@ if __name__ == "__main__":
         user_image_path="UserImages/img.png",
         overline_text="سوخت قاچاق در خليج فارس",
         main_headline_text=" لغو تحريم مسيرهاى ترانزيتى ايران پتانسيل بالاى راه آهن براى ارزآورى",
-       events_text="روز بزركَداشت شيخ بهايى؛ روزملى كارآفرينى؛ روز معمارى",
-        output_path="./OutPut/BreakingNews_output.png",
-        dynamic_font_size=True
+        events_text="روز بزركَداشت شيخ بهايى؛ روزملى كارآفرينى؛ روز معمارى",
+        output_path="./OutPut/dev_output.png",
+        dynamic_font_size=True,
     )
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="Generate a newspaper-style image with text overlays and optional watermark."
-    )
-    parser.add_argument(
-        "--user_image_path",
-        type=str,
-        required=True,
-        help="Path to the user image or pre-composed base image.",
-    )
-    parser.add_argument(
-        "--overline_text", type=str, required=True, help="The overline text."
-    )
-    parser.add_argument(
-        "--main_headline_text", type=str, required=True, help="The main headline text."
-    )
-    parser.add_argument(
-        "--output_path", type=str, required=True, help="Path to save the final image."
-    )
+# if __name__ == "__main__":
+#     parser = argparse.ArgumentParser(
+#         description="Generate a newspaper-style image with text overlays and optional watermark."
+#     )
+#     parser.add_argument(
+#         "--user_image_path",
+#         type=str,
+#         required=True,
+#         help="Path to the user image or pre-composed base image.",
+#     )
+#     parser.add_argument(
+#         "--overline_text", type=str, required=True, help="The overline text."
+#     )
+#     parser.add_argument(
+#         "--main_headline_text", type=str, required=True, help="The main headline text."
+#     )
+#     parser.add_argument(
+#         "--output_path", type=str, required=True, help="Path to save the final image."
+#     )
 
-    parser.add_argument(
-        "--events_text", type=str, default=None, help="Optional text for event 1."
-    )
+#     parser.add_argument(
+#         "--events_text", type=str, default=None, help="Optional text for event 1."
+#     )
 
-    args = parser.parse_args()
+#     args = parser.parse_args()
 
-    create_newspaper_image(
-        user_image_path=args.user_image_path,
-        overline_text=args.overline_text,
-        main_headline_text=args.main_headline_text,
-        output_path=args.output_path,
-        events_text=args.events_text,
-    )
+#     create_newspaper_image(
+#         user_image_path=args.user_image_path,
+#         overline_text=args.overline_text,
+#         main_headline_text=args.main_headline_text,
+#         output_path=args.output_path,
+#         events_text=args.events_text,
+#     )
 
 # python "./src/Craft/Post.py" --user_image_path="./UserImages/img.png" --overline_text="سوخت قاچاق در خليج فارس" --main_headline_text="كشف محموله عظيم سوخت قاچاق درخليج فارس؛ ضربه سنگين به قاچاقچيان" --output_path="./OutPut/Post_output.png" --events_text="رویداد "

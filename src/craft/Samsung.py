@@ -128,7 +128,7 @@ def create_crypto_post(
 #     create_crypto_post(
 #         GALAXYS25ULTRA="382000000000",
 #         GALAXYS24ULTRA="190000000",
-#         GALAXYS23ULTRA="888888888888",
+#         GALAXYS23ULTRA="888888988888",
 #         GALAXYS24FE="17000",
 #         GALAXYA56="12000000",
 #         GALAXYA35="6000000",

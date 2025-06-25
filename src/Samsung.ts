@@ -27,10 +27,10 @@ interface SessionData {
     // iPhone values stored as *strings* exactly as user entered
     GALAXYS25ULTRA?: string;
     GALAXYS24ULTRA?: string;
-    IPHONE16NORMAL?: string;
     GALAXYS23ULTRA?: string;
     GALAXYS24FE?: string;
     GALAXYA56?: string;
+    GALAXYA35?: string;
     GALAXYA16?: string;
     GALAXYA06?: string;
     outputPath?: string;
@@ -46,10 +46,10 @@ type FieldConversation = Conversation<MyContext, MyContext>;
 export type iPhoneField = keyof Pick<SessionData,
     | "GALAXYS25ULTRA"
     | "GALAXYS24ULTRA"
-    | "IPHONE16NORMAL"
     | "GALAXYS23ULTRA"
     | "GALAXYS24FE"
     | "GALAXYA56"
+    | "GALAXYA35"
     | "GALAXYA16"
     | "GALAXYA06">;
 
@@ -77,10 +77,10 @@ bot.use(hydrate());
 interface FormData {
     GALAXYS25ULTRA?: string;
     GALAXYS24ULTRA?: string;
-    IPHONE16NORMAL?: string;
     GALAXYS23ULTRA?: string;
     GALAXYS24FE?: string;
     GALAXYA56?: string;
+    GALAXYA35?: string;
     GALAXYA16?: string;
     GALAXYA06?: string;
 
@@ -103,10 +103,10 @@ function collectFormData(ctx: MyContext): FormData {
     return {
         GALAXYS25ULTRA: s?.GALAXYS25ULTRA,
         GALAXYS24ULTRA: s?.GALAXYS24ULTRA,
-        IPHONE16NORMAL: s?.IPHONE16NORMAL,
         GALAXYS23ULTRA: s?.GALAXYS23ULTRA,
         GALAXYS24FE: s?.GALAXYS24FE,
         GALAXYA56: s?.GALAXYA56,
+        GALAXYA35: s?.GALAXYA35,
         GALAXYA16: s?.GALAXYA16,
         GALAXYA06: s?.GALAXYA06,
     };
@@ -117,10 +117,10 @@ async function updateiPhoneImage(ctx: MyContext) {
     const {
         GALAXYS25ULTRA = "0",
         GALAXYS24ULTRA = "0",
-        IPHONE16NORMAL = "0",
         GALAXYS23ULTRA = "0",
         GALAXYS24FE = "0",
         GALAXYA56 = "0",
+        GALAXYA35 = "0",
         GALAXYA16 = "0",
         GALAXYA06 = "0",
 
@@ -135,14 +135,14 @@ async function updateiPhoneImage(ctx: MyContext) {
         GALAXYS25ULTRA,
         "--GALAXYS24ULTRA",
         GALAXYS24ULTRA,
-        "--IPHONE16NORMAL",
-        IPHONE16NORMAL,
         "--GALAXYS23ULTRA",
         GALAXYS23ULTRA,
         "--GALAXYS24FE",
         GALAXYS24FE,
         "--GALAXYA56",
         GALAXYA56,
+        "--GALAXYA35",
+        GALAXYA35,
         "--GALAXYA16",
         GALAXYA16,
         "--GALAXYA06",
@@ -219,21 +219,21 @@ function buildFormMenu(conversation: Conversation<MyContext, any>, data: FormDat
     return (
         conversation
             .menu("form")
-            .text(data.GALAXYS25ULTRA ? "16 Pro Max" : "16 Pro Max", (ctx) => ctx.conversation.enter("GALAXYS25ULTRAConversation"))
+            .text(data.GALAXYS25ULTRA ? "Galaxy S25 Ultra" : "Galaxy S25 Ultra", (ctx) => ctx.conversation.enter("GALAXYS25ULTRAConversation"))
             .row()
-            .text(data.GALAXYS24ULTRA ? "16 Pro " : "16 Pro ", (ctx) => ctx.conversation.enter("GALAXYS24ULTRAConversation"))
+            .text(data.GALAXYS24ULTRA ? "Galaxy S24 Ultra" : "Galaxy S24 Ultra", (ctx) => ctx.conversation.enter("GALAXYS24ULTRAConversation"))
             .row()
-            .text(data.IPHONE16NORMAL ? "16 Normal " : "16 Normal ", (ctx) => ctx.conversation.enter("IPHONE16NORMALConversation"))
+            .text(data.GALAXYS23ULTRA ? "Galaxy S23 Ultra" : "Galaxy S23 Ultra", (ctx) => ctx.conversation.enter("GALAXYS23ULTRAConversation"))
             .row()
-            .text(data.GALAXYS23ULTRA ? "15 Pro Max " : "15 Pro Max ", (ctx) => ctx.conversation.enter("GALAXYS23ULTRAConversation"))
+            .text(data.GALAXYS24FE ? "Galaxy S24 FE" : "Galaxy S24 FE", (ctx) => ctx.conversation.enter("GALAXYS24FEConversation"))
             .row()
-            .text(data.GALAXYS24FE ? "15 Pro " : "15 Pro ", (ctx) => ctx.conversation.enter("GALAXYS24FEConversation"))
+            .text(data.GALAXYA56 ? "Galaxy A56 " : "Galaxy A56 ", (ctx) => ctx.conversation.enter("GALAXYA56Conversation"))
             .row()
-            .text(data.GALAXYA56 ? "14 Normal " : "14 Normal ", (ctx) => ctx.conversation.enter("GALAXYA56Conversation"))
+            .text(data.GALAXYA35 ? "Galaxy A35" : "Galaxy A35", (ctx) => ctx.conversation.enter("GALAXYA35Conversation"))
             .row()
-            .text(data.GALAXYA16 ? "13 Pro Max " : "13 Pro Max ", (ctx) => ctx.conversation.enter("GALAXYA16Conversation"))
+            .text(data.GALAXYA16 ? "Galaxy A16" : "Galaxy A16", (ctx) => ctx.conversation.enter("GALAXYA16Conversation"))
             .row()
-            .text(data.GALAXYA16 ? "13 Pro " : "13 Pro ", (ctx) => ctx.conversation.enter("GALAXYA06Conversation"))
+            .text(data.GALAXYA16 ? "Galaxy A06" : "Galaxy A06", (ctx) => ctx.conversation.enter("GALAXYA06Conversation"))
             .row()
             .text("فایل ✅", (ctx) => ctx.conversation.enter("finishConversation"))
             .text("🧹", (ctx) => ctx.conversation.enter("clearFormConversation"))
@@ -250,20 +250,20 @@ function createiPhoneConversation(fieldName: iPhoneField, prompt: string) {
 }
 
 const GALAXYS25ULTRAConversation = createiPhoneConversation("GALAXYS25ULTRA", "لطفا مقدار  Pro Max 16 را وارد کنید");
-const GALAXYS24ULTRAConversation = createiPhoneConversation("GALAXYS24ULTRA", "لطفا مقدار 16 Pro را وارد کنید");
-const IPHONE16NORMALConversation = createiPhoneConversation("IPHONE16NORMAL", "لطفا مقدار 16 Normal را وارد کنید");
-const GALAXYS23ULTRAConversation = createiPhoneConversation("GALAXYS23ULTRA", "لطفا مقدار 15 Pro Max را وارد کنید");
-const GALAXYS24FEConversation = createiPhoneConversation("GALAXYS24FE", "لطفا مقدار 15 Pro را وارد کنید");
-const GALAXYA56Conversation = createiPhoneConversation("GALAXYA56", "لطفا مقدار 14 Normal را وارد کنید");
-const GALAXYA16Conversation = createiPhoneConversation("GALAXYA16", "لطفا مقدار 13 Pro Max  را وارد کنید");
-const GALAXYA06Conversation = createiPhoneConversation("GALAXYA06", "لطفا مقدار 13 Pro  را وارد کنید");
+const GALAXYS24ULTRAConversation = createiPhoneConversation("GALAXYS24ULTRA", "لطفا مقدار Galaxy S24 Ultraرا وارد کنید");
+const GALAXYS23ULTRAConversation = createiPhoneConversation("GALAXYS23ULTRA", "لطفا مقدار Galaxy S23 Ultraرا وارد کنید");
+const GALAXYS24FEConversation = createiPhoneConversation("GALAXYS24FE", "لطفا مقدار Galaxy S24 FEرا وارد کنید");
+const GALAXYA56Conversation = createiPhoneConversation("GALAXYA56", "لطفا مقدار Galaxy A56 را وارد کنید");
+const GALAXYA35Conversation = createiPhoneConversation("GALAXYA35", "لطفا مقدار Galaxy A35را وارد کنید");
+const GALAXYA16Conversation = createiPhoneConversation("GALAXYA16", "لطفا مقدار Galaxy A16 را وارد کنید");
+const GALAXYA06Conversation = createiPhoneConversation("GALAXYA06", "لطفا مقدار Galaxy A06 را وارد کنید");
 
 // clear form conversation
 async function clearFormConversation(conversation: FieldConversation, ctx: FieldContext) {
     await ctx.answerCallbackQuery();
 
     await conversation.external((ctx) => {
-        ctx.session.GALAXYS25ULTRA = ctx.session.GALAXYS24ULTRA = ctx.session.IPHONE16NORMAL = ctx.session.GALAXYS23ULTRA = ctx.session.GALAXYS24FE = ctx.session.GALAXYA56 = ctx.session.GALAXYA16 = undefined;
+        ctx.session.GALAXYS25ULTRA = ctx.session.GALAXYS24ULTRA = ctx.session.GALAXYS23ULTRA = ctx.session.GALAXYS24FE = ctx.session.GALAXYA56 = ctx.session.GALAXYA35 = ctx.session.GALAXYA16 = undefined;
         ctx.session.sentDocMsgIds = [];
     });
 
@@ -324,11 +324,11 @@ async function finishConversation(
 
 bot.use(createConversation(GALAXYS25ULTRAConversation, "GALAXYS25ULTRAConversation"));
 bot.use(createConversation(GALAXYS24ULTRAConversation, "GALAXYS24ULTRAConversation"));
-bot.use(createConversation(IPHONE16NORMALConversation, "IPHONE16NORMALConversation"));
+bot.use(createConversation(GALAXYS23ULTRAConversation, "GALAXYS23ULTRAConversation"));
 bot.use(createConversation
-    (GALAXYS23ULTRAConversation, "GALAXYS23ULTRAConversation"));
-bot.use(createConversation(GALAXYS24FEConversation, "GALAXYS24FEConversation"));
+    (GALAXYS24FEConversation, "GALAXYS24FEConversation"));
 bot.use(createConversation(GALAXYA56Conversation, "GALAXYA56Conversation"));
+bot.use(createConversation(GALAXYA35Conversation, "GALAXYA35Conversation"));
 bot.use(createConversation(GALAXYA16Conversation, "GALAXYA16Conversation"));
 bot.use(createConversation(GALAXYA06Conversation, "GALAXYA06Conversation"));
 bot.use(createConversation(clearFormConversation, "clearFormConversation"));
@@ -338,21 +338,21 @@ bot.use(createConversation(finishConversation, "finishConversation"));
 //  Stand‑alone menu instance (needed for /start)
 // --------------------------------------------------
 export const formMenu = new Menu<MyContext>("form", { onMenuOutdated: false })
-    .text((ctx) => collectFormData(ctx).GALAXYS25ULTRA ? "16 Pro Max" : "16 Pro Max", (ctx) => ctx.conversation.enter("GALAXYS25ULTRAConversation"))
+    .text((ctx) => collectFormData(ctx).GALAXYS25ULTRA ? "Galaxy S25 Ultra" : "Galaxy S25 Ultra", (ctx) => ctx.conversation.enter("GALAXYS25ULTRAConversation"))
     .row()
-    .text((ctx) => collectFormData(ctx).GALAXYS24ULTRA ? "16 Pro " : "16 Pro ", (ctx) => ctx.conversation.enter("GALAXYS24ULTRAConversation"))
+    .text((ctx) => collectFormData(ctx).GALAXYS24ULTRA ? "Galaxy S24 Ultra" : "Galaxy S24 Ultra", (ctx) => ctx.conversation.enter("GALAXYS24ULTRAConversation"))
     .row()
-    .text((ctx) => collectFormData(ctx).IPHONE16NORMAL ? "16 Normal " : "16 Normal ", (ctx) => ctx.conversation.enter("IPHONE16NORMALConversation"))
+    .text((ctx) => collectFormData(ctx).GALAXYS23ULTRA ? "Galaxy S23 Ultra" : "Galaxy S23 Ultra", (ctx) => ctx.conversation.enter("GALAXYS23ULTRAConversation"))
     .row()
-    .text((ctx) => collectFormData(ctx).GALAXYS23ULTRA ? "15 Pro Max " : "15 Pro Max ", (ctx) => ctx.conversation.enter("GALAXYS23ULTRAConversation"))
+    .text((ctx) => collectFormData(ctx).GALAXYS24FE ? "Galaxy S24 FE" : "Galaxy S24 FE", (ctx) => ctx.conversation.enter("GALAXYS24FEConversation"))
     .row()
-    .text((ctx) => collectFormData(ctx).GALAXYS24FE ? "15 Pro " : "15 Pro ", (ctx) => ctx.conversation.enter("GALAXYS24FEConversation"))
+    .text((ctx) => collectFormData(ctx).GALAXYA56 ? "Galaxy A56 " : "Galaxy A56 ", (ctx) => ctx.conversation.enter("GALAXYA56Conversation"))
     .row()
-    .text((ctx) => collectFormData(ctx).GALAXYA56 ? "14 Normal " : "14 Normal ", (ctx) => ctx.conversation.enter("GALAXYA56Conversation"))
+    .text((ctx) => collectFormData(ctx).GALAXYA35 ? "Galaxy A35" : "Galaxy A35", (ctx) => ctx.conversation.enter("GALAXYA35Conversation"))
     .row()
-    .text((ctx) => collectFormData(ctx).GALAXYA16 ? "13 Pro Max " : "13 Pro Max ", (ctx) => ctx.conversation.enter("GALAXYA16Conversation"))
+    .text((ctx) => collectFormData(ctx).GALAXYA16 ? "Galaxy A16" : "Galaxy A16", (ctx) => ctx.conversation.enter("GALAXYA16Conversation"))
     .row()
-    .text((ctx) => collectFormData(ctx).GALAXYA16 ? "13 Pro " : "13 Pro ", (ctx) => ctx.conversation.enter("GALAXYA06Conversation"))
+    .text((ctx) => collectFormData(ctx).GALAXYA16 ? "Galaxy A06" : "Galaxy A06", (ctx) => ctx.conversation.enter("GALAXYA06Conversation"))
     .row()
     .text("فایل ✅", (ctx) => ctx.conversation.enter("finishConversation"))
     .text("🧹", (ctx) => ctx.conversation.enter("clearFormConversation"));

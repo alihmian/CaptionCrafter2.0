@@ -43,7 +43,7 @@ type FieldConversation = Conversation<MyContext, MyContext>;
 // ----------------------
 // Create the Bot
 // ----------------------
-const bot = new Bot<MyContext>("7572093455:AAF-uO2uHhwWbO584paHgBGj_uRr5pu8IL8");
+export const bot = new Bot<MyContext>("7572093455:AAF-uO2uHhwWbO584paHgBGj_uRr5pu8IL8");
 
 // put near the top of Post2.0.ts
 const warned = new Set<number>();   // keeps us from spamming the user
@@ -572,7 +572,7 @@ bot.command("start", async (ctx) => {
     log(`Sent initial menu and stored mainMessageId: ${sentMessage.message_id}`);
 });
 
-const OWNERS = new Set<number>([
+export const OWNERS = new Set<number>([
     169844220,   // you
 ]);
 

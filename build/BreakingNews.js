@@ -41,6 +41,9 @@ const conversations_1 = require("@grammyjs/conversations");
 const fs = __importStar(require("fs"));
 const child_process_1 = require("child_process");
 const storage_file_1 = require("@grammyjs/storage-file");
+const blocked_1 = require("./blocked");
+const blocked_2 = require("./blocked");
+const OWNERS_1 = require("./OWNERS");
 const log = (...args) => {
     const timestamp = new Date().toISOString();
     console.log(`[${timestamp}]`, ...args);
@@ -49,6 +52,30 @@ const log = (...args) => {
 // Create the Bot
 // ----------------------
 const bot = new grammy_1.Bot("7920936103:AAFgOL7oiW6SZUpm6kZGvJf-_HV2UrUBhZs");
+// put near the top of Post2.0.ts
+const warned = new Set(); // keeps us from spamming the user
+bot.use(async (ctx, next) => {
+    const uid = ctx.from?.id;
+    if (uid && blocked_1.blocked.has(uid)) {
+        // send the notice only once per session
+        if (!warned.has(uid)) {
+            warned.add(uid);
+            if (ctx.callbackQuery) {
+                // user tapped an inline-button
+                await ctx.answerCallbackQuery({
+                    text: "🚫 You’re blocked from using this bot.",
+                    show_alert: true,
+                });
+            }
+            else {
+                // normal message/command
+                await ctx.reply("🚫 You’re blocked from using this bot.");
+            }
+        }
+        return; // stop processing the update
+    }
+    return next();
+});
 // Use session, conversations, and hydration middleware
 bot.use((0, grammy_1.session)({
     initial: () => ({
@@ -393,9 +420,38 @@ bot.command("start", async (ctx) => {
     ctx.session.mainMessageId = sentMessage.message_id;
     log(`Sent initial menu and stored mainMessageId: ${sentMessage.message_id}`);
 });
-bot.api.setMyCommands([
-    { command: "start", description: "رباتو روشن کن!" },
-]);
+const isOwner = (ctx) => ctx.from && OWNERS_1.OWNERS.has(ctx.from.id);
+bot.command("block", async (ctx) => {
+    if (!isOwner(ctx))
+        return;
+    const id = Number(ctx.match.trim());
+    if (!id)
+        return ctx.reply("نحوه‌ٔ استفاده: /block telegram_id");
+    await (0, blocked_2.add)(id);
+    ctx.reply(`✅ ${id} blocked`);
+});
+bot.command("unblock", async (ctx) => {
+    if (!isOwner(ctx))
+        return;
+    const id = Number(ctx.match.trim());
+    await (0, blocked_2.remove)(id);
+    ctx.reply(`🗑️ ${id} unblocked`);
+});
+(async () => {
+    // public commands
+    await bot.api.setMyCommands([
+        { command: "start", description: "رباتو روشن کن!" },
+    ]);
+    // owner-only commands
+    for (const uid of OWNERS_1.OWNERS) {
+        await bot.api.setMyCommands([
+            { command: "block", description: "Block a user by ID" },
+            { command: "unblock", description: "Unblock a user" },
+        ], { scope: { type: "chat", chat_id: uid } });
+    }
+    // finally start the bot
+    await bot.start();
+})();
 bot.catch((err) => {
     log("Global error handler caught:", err);
 });

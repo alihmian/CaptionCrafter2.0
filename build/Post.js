@@ -33,7 +33,7 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.formMenu = void 0;
+exports.OWNERS = exports.formMenu = exports.bot = void 0;
 const grammy_1 = require("grammy");
 const menu_1 = require("@grammyjs/menu");
 const hydrate_1 = require("@grammyjs/hydrate");
@@ -50,10 +50,10 @@ const log = (...args) => {
 // ----------------------
 // Create the Bot
 // ----------------------
-const bot = new grammy_1.Bot("7572093455:AAF-uO2uHhwWbO584paHgBGj_uRr5pu8IL8");
+exports.bot = new grammy_1.Bot("7572093455:AAF-uO2uHhwWbO584paHgBGj_uRr5pu8IL8");
 // put near the top of Post2.0.ts
 const warned = new Set(); // keeps us from spamming the user
-bot.use(async (ctx, next) => {
+exports.bot.use(async (ctx, next) => {
     const uid = ctx.from?.id;
     if (uid && blocked_1.blocked.has(uid)) {
         // send the notice only once per session
@@ -76,14 +76,14 @@ bot.use(async (ctx, next) => {
     return next();
 });
 // Use session, conversations, and hydration middleware
-bot.use((0, grammy_1.session)({
+exports.bot.use((0, grammy_1.session)({
     initial: () => ({
         sentDocMsgIds: [],
     }),
     storage: new storage_file_1.FileAdapter({ dirName: "./sessions" }),
 }));
-bot.use((0, conversations_1.conversations)());
-bot.use((0, hydrate_1.hydrate)());
+exports.bot.use((0, conversations_1.conversations)());
+exports.bot.use((0, hydrate_1.hydrate)());
 // Safe accessor
 function getOutputPath(ctx) {
     return ctx.session?.outputPath
@@ -256,7 +256,7 @@ async function imageConversation(conversation, ctx) {
             const fileId = largestPhoto.file_id;
             const localPath = "./UserImages/image_" + ctx.chatId + ".jpg";
             const fileInfo = await ctx.api.getFile(fileId);
-            const fileUrl = `https://api.telegram.org/file/bot${bot.token}/${fileInfo.file_path}`;
+            const fileUrl = `https://api.telegram.org/file/bot${exports.bot.token}/${fileInfo.file_path}`;
             const response = await fetch(fileUrl);
             if (!response.ok) {
                 await ctx.reply("Failed to download the photo!");
@@ -367,12 +367,12 @@ async function finishConversation(conversation, ctx) {
 // ----------------------
 // Register Conversations
 // ----------------------
-bot.use((0, conversations_1.createConversation)(imageConversation, "imageConversation"));
-bot.use((0, conversations_1.createConversation)(overlineConversation, "overlineConversation"));
-bot.use((0, conversations_1.createConversation)(mainHeadlineConversation, "mainHeadlineConversation"));
-bot.use((0, conversations_1.createConversation)(eventsConversation, "eventsConversation"));
-bot.use((0, conversations_1.createConversation)(clearFormConversation, "clearFormConversation"));
-bot.use((0, conversations_1.createConversation)(finishConversation, "finishConversation"));
+exports.bot.use((0, conversations_1.createConversation)(imageConversation, "imageConversation"));
+exports.bot.use((0, conversations_1.createConversation)(overlineConversation, "overlineConversation"));
+exports.bot.use((0, conversations_1.createConversation)(mainHeadlineConversation, "mainHeadlineConversation"));
+exports.bot.use((0, conversations_1.createConversation)(eventsConversation, "eventsConversation"));
+exports.bot.use((0, conversations_1.createConversation)(clearFormConversation, "clearFormConversation"));
+exports.bot.use((0, conversations_1.createConversation)(finishConversation, "finishConversation"));
 // ----------------------
 // Create Menus
 // ----------------------
@@ -403,11 +403,11 @@ exports.formMenu = new menu_1.Menu("form", {
     .text("فایل ✅ ", (ctx) => ctx.conversation.enter("finishConversation"))
     .text("🧹", (ctx) => ctx.conversation.enter("clearFormConversation"));
 // Register the menus
-bot.use(exports.formMenu);
+exports.bot.use(exports.formMenu);
 // ----------------------
 // Command to Start the Bot
 // ----------------------
-bot.command("start", async (ctx) => {
+exports.bot.command("start", async (ctx) => {
     const userId = ctx.from?.id;
     const userSpecificPath = `./OutPut/generated_post_image_${userId}.png`;
     log(`User ${userId} started the bot`);
@@ -416,11 +416,11 @@ bot.command("start", async (ctx) => {
     ctx.session.mainMessageId = sentMessage.message_id;
     log(`Sent initial menu and stored mainMessageId: ${sentMessage.message_id}`);
 });
-const OWNERS = new Set([
+exports.OWNERS = new Set([
     169844220, // you
 ]);
-const isOwner = (ctx) => ctx.from && OWNERS.has(ctx.from.id);
-bot.command("block", async (ctx) => {
+const isOwner = (ctx) => ctx.from && exports.OWNERS.has(ctx.from.id);
+exports.bot.command("block", async (ctx) => {
     if (!isOwner(ctx))
         return;
     const id = Number(ctx.match.trim());
@@ -429,7 +429,7 @@ bot.command("block", async (ctx) => {
     await (0, blocked_2.add)(id);
     ctx.reply(`✅ ${id} blocked`);
 });
-bot.command("unblock", async (ctx) => {
+exports.bot.command("unblock", async (ctx) => {
     if (!isOwner(ctx))
         return;
     const id = Number(ctx.match.trim());
@@ -439,22 +439,22 @@ bot.command("unblock", async (ctx) => {
 // Post2.0.ts (or wherever you boot the bot)
 (async () => {
     // public commands
-    await bot.api.setMyCommands([
+    await exports.bot.api.setMyCommands([
         { command: "start", description: "رباتو روشن کن!" },
     ]);
     // owner-only commands
-    for (const uid of OWNERS) {
-        await bot.api.setMyCommands([
+    for (const uid of exports.OWNERS) {
+        await exports.bot.api.setMyCommands([
             { command: "start", description: "رباتو روشن کن!" },
             { command: "block", description: "با کمک آی‌دی یوزر مورد نظرو بلاک کن" },
             { command: "unblock", description: "یوزر رو از بلاکی در بیار" },
         ], { scope: { type: "chat", chat_id: uid } });
     }
     // finally start the bot
-    await bot.start();
+    await exports.bot.start();
 })();
-bot.catch((err) => {
+exports.bot.catch((err) => {
     log("Global error handler caught:", err);
 });
-bot.start();
+exports.bot.start();
 console.log("Bot is running...");

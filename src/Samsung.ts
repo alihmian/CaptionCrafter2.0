@@ -223,7 +223,7 @@ function buildFormMenu(conversation: Conversation<MyContext, any>, data: FormDat
             .row()
             .text(data.GALAXYS24ULTRA ? "Galaxy S24 Ultra" : "Galaxy S24 Ultra", (ctx) => ctx.conversation.enter("GALAXYS24ULTRAConversation"))
             .row()
-            .text(data.GALAXYS23ULTRA ? "Galaxy S23 Ultra" : "Galaxy S23 Ultra", (ctx) => ctx.conversation.enter("GALAXYS23ULTRAConversation"))
+            .text(data.GALAXYS23ULTRA ? "Galaxy S25 plus" : "Galaxy S25 plus", (ctx) => ctx.conversation.enter("GALAXYS23ULTRAConversation"))
             .row()
             .text(data.GALAXYS24FE ? "Galaxy S24 FE" : "Galaxy S24 FE", (ctx) => ctx.conversation.enter("GALAXYS24FEConversation"))
             .row()
@@ -251,7 +251,7 @@ function createiPhoneConversation(fieldName: iPhoneField, prompt: string) {
 
 const GALAXYS25ULTRAConversation = createiPhoneConversation("GALAXYS25ULTRA", "لطفا مقدار  Pro Max 16 را وارد کنید");
 const GALAXYS24ULTRAConversation = createiPhoneConversation("GALAXYS24ULTRA", "لطفا مقدار Galaxy S24 Ultraرا وارد کنید");
-const GALAXYS23ULTRAConversation = createiPhoneConversation("GALAXYS23ULTRA", "لطفا مقدار Galaxy S23 Ultraرا وارد کنید");
+const GALAXYS23ULTRAConversation = createiPhoneConversation("GALAXYS23ULTRA", "لطفا مقدار Galaxy S25 plusرا وارد کنید");
 const GALAXYS24FEConversation = createiPhoneConversation("GALAXYS24FE", "لطفا مقدار Galaxy S24 FEرا وارد کنید");
 const GALAXYA56Conversation = createiPhoneConversation("GALAXYA56", "لطفا مقدار Galaxy A56 را وارد کنید");
 const GALAXYA35Conversation = createiPhoneConversation("GALAXYA35", "لطفا مقدار Galaxy A35را وارد کنید");
@@ -342,7 +342,7 @@ export const formMenu = new Menu<MyContext>("form", { onMenuOutdated: false })
     .row()
     .text((ctx) => collectFormData(ctx).GALAXYS24ULTRA ? "Galaxy S24 Ultra" : "Galaxy S24 Ultra", (ctx) => ctx.conversation.enter("GALAXYS24ULTRAConversation"))
     .row()
-    .text((ctx) => collectFormData(ctx).GALAXYS23ULTRA ? "Galaxy S23 Ultra" : "Galaxy S23 Ultra", (ctx) => ctx.conversation.enter("GALAXYS23ULTRAConversation"))
+    .text((ctx) => collectFormData(ctx).GALAXYS23ULTRA ? "Galaxy S25 plus" : "Galaxy S25 plus", (ctx) => ctx.conversation.enter("GALAXYS23ULTRAConversation"))
     .row()
     .text((ctx) => collectFormData(ctx).GALAXYS24FE ? "Galaxy S24 FE" : "Galaxy S24 FE", (ctx) => ctx.conversation.enter("GALAXYS24FEConversation"))
     .row()

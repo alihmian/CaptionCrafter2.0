@@ -30,7 +30,7 @@ bot.use((0, hydrate_1.hydrate)());
 //     return ctx.session.outputPath ?? `./OutPut/Samsung_post_${ctx.from!.id}.png`;
 // }
 function getOutputPath(ctx) {
-    const fallback = `./OutPut/samsung_post_${ctx.from?.id ?? "anon"}.png`;
+    const fallback = `./OutPut/Samsung_post_${ctx.from?.id ?? "anon"}.png`;
     // optional‑chain ⇒ never touches .outputPath if session is missing
     return ctx.session?.outputPath ?? fallback;
 }

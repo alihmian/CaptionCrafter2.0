@@ -92,7 +92,7 @@ interface FormData {
 function getOutputPath(
     ctx: Context & { from?: any; session?: Partial<SessionData> },
 ): string {
-    const fallback = `./OutPut/samsung_post_${ctx.from?.id ?? "anon"}.png`;
+    const fallback = `./OutPut/Samsung_post_${ctx.from?.id ?? "anon"}.png`;
     // optional‑chain ⇒ never touches .outputPath if session is missing
     return (ctx as any).session?.outputPath ?? fallback;
 }

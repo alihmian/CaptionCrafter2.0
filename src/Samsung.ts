@@ -24,7 +24,7 @@ const log = (...args: any[]) => {
 // --------------------------------------------------
 interface SessionData {
     mainMessageId?: number;
-    // iPhone values stored as *strings* exactly as user entered
+    // Samsung values stored as *strings* exactly as user entered
     GALAXYS25ULTRA?: string;
     GALAXYS24ULTRA?: string;
     GALAXYS23ULTRA?: string;
@@ -41,9 +41,9 @@ type MyContext = HydrateFlavor<ConversationFlavor<Context & SessionFlavor<Sessio
 type FieldContext = MyContext;
 type FieldConversation = Conversation<MyContext, MyContext>;
 
-// restrict field names to ONLY the iPhone keys so TypeScript stops whining
+// restrict field names to ONLY the Samsung keys so TypeScript stops whining
 // (otherwise `mainMessageId` etc. would be allowed and the assignment below breaks)
-export type iPhoneField = keyof Pick<SessionData,
+export type SamsungField = keyof Pick<SessionData,
     | "GALAXYS25ULTRA"
     | "GALAXYS24ULTRA"
     | "GALAXYS23ULTRA"
@@ -87,12 +87,12 @@ interface FormData {
 }
 
 // function getOutputPath(ctx: MyContext): string {
-//     return ctx.session.outputPath ?? `./OutPut/iPhone_post_${ctx.from!.id}.png`;
+//     return ctx.session.outputPath ?? `./OutPut/Samsung_post_${ctx.from!.id}.png`;
 // }
 function getOutputPath(
     ctx: Context & { from?: any; session?: Partial<SessionData> },
 ): string {
-    const fallback = `./OutPut/iPhone_post_${ctx.from?.id ?? "anon"}.png`;
+    const fallback = `./OutPut/samsung_post_${ctx.from?.id ?? "anon"}.png`;
     // optional‑chain ⇒ never touches .outputPath if session is missing
     return (ctx as any).session?.outputPath ?? fallback;
 }
@@ -113,7 +113,7 @@ function collectFormData(ctx: MyContext): FormData {
 }
 
 // spawn the Python script to compose the image
-async function updateiPhoneImage(ctx: MyContext) {
+async function updateSamsungImage(ctx: MyContext) {
     const {
         GALAXYS25ULTRA = "0",
         GALAXYS24ULTRA = "0",
@@ -151,7 +151,7 @@ async function updateiPhoneImage(ctx: MyContext) {
         outputPath,
     ];
 
-    log("Calling Python iPhone.py with args", args);
+    log("Calling Python Samsung.py with args", args);
     const result = spawnSync("python3", args, { stdio: "inherit" });
     if (result.error) log("Python error", result.error);
 
@@ -176,7 +176,7 @@ async function handleFieldInput<T extends MyContext>(
     conversation: Conversation<T, any>,
     ctx: T,
     options: {
-        fieldName: iPhoneField;
+        fieldName: SamsungField;
         promptMessage: string;
     },
     buildMenu: (conversation: Conversation<T, any>, data: FormData) => any,
@@ -207,7 +207,7 @@ async function handleFieldInput<T extends MyContext>(
         /* ignore */
     });
 
-    await conversation.external(updateiPhoneImage);
+    await conversation.external(updateSamsungImage);
 
     await ctx.editMessageReplyMarkup({ reply_markup: updatedMenu });
 }
@@ -241,22 +241,22 @@ function buildFormMenu(conversation: Conversation<MyContext, any>, data: FormDat
 }
 
 // --------------------------------------------------
-//  Conversation generators for each iPhone field
+//  Conversation generators for each Samsung field
 // --------------------------------------------------
-function createiPhoneConversation(fieldName: iPhoneField, prompt: string) {
+function createSamsungConversation(fieldName: SamsungField, prompt: string) {
     return async function (conversation: FieldConversation, ctx: MyContext) {
         await handleFieldInput(conversation, ctx, { fieldName, promptMessage: prompt }, buildFormMenu);
     };
 }
 
-const GALAXYS25ULTRAConversation = createiPhoneConversation("GALAXYS25ULTRA", "لطفا مقدار  Galaxy S25 Ultraرا وارد کنید");
-const GALAXYS24ULTRAConversation = createiPhoneConversation("GALAXYS24ULTRA", "لطفا مقدار Galaxy S24 Ultraرا وارد کنید");
-const GALAXYS23ULTRAConversation = createiPhoneConversation("GALAXYS23ULTRA", "لطفا مقدار Galaxy S25 plusرا وارد کنید");
-const GALAXYS24FEConversation = createiPhoneConversation("GALAXYS24FE", "لطفا مقدار Galaxy S24 FEرا وارد کنید");
-const GALAXYA56Conversation = createiPhoneConversation("GALAXYA56", "لطفا مقدار Galaxy A56 را وارد کنید");
-const GALAXYA35Conversation = createiPhoneConversation("GALAXYA35", "لطفا مقدار Galaxy A35را وارد کنید");
-const GALAXYA16Conversation = createiPhoneConversation("GALAXYA16", "لطفا مقدار Galaxy A16 را وارد کنید");
-const GALAXYA06Conversation = createiPhoneConversation("GALAXYA06", "لطفا مقدار Galaxy A06 را وارد کنید");
+const GALAXYS25ULTRAConversation = createSamsungConversation("GALAXYS25ULTRA", "لطفا مقدار  Galaxy S25 Ultraرا وارد کنید");
+const GALAXYS24ULTRAConversation = createSamsungConversation("GALAXYS24ULTRA", "لطفا مقدار Galaxy S24 Ultraرا وارد کنید");
+const GALAXYS23ULTRAConversation = createSamsungConversation("GALAXYS23ULTRA", "لطفا مقدار Galaxy S25 plusرا وارد کنید");
+const GALAXYS24FEConversation = createSamsungConversation("GALAXYS24FE", "لطفا مقدار Galaxy S24 FEرا وارد کنید");
+const GALAXYA56Conversation = createSamsungConversation("GALAXYA56", "لطفا مقدار Galaxy A56 را وارد کنید");
+const GALAXYA35Conversation = createSamsungConversation("GALAXYA35", "لطفا مقدار Galaxy A35را وارد کنید");
+const GALAXYA16Conversation = createSamsungConversation("GALAXYA16", "لطفا مقدار Galaxy A16 را وارد کنید");
+const GALAXYA06Conversation = createSamsungConversation("GALAXYA06", "لطفا مقدار Galaxy A06 را وارد کنید");
 
 // clear form conversation
 async function clearFormConversation(conversation: FieldConversation, ctx: FieldContext) {
@@ -277,7 +277,7 @@ async function finishConversation(
     conversation: FieldConversation,
     ctx: MyContext
 ) {
-    await conversation.external(updateiPhoneImage);   // ← add this line
+    await conversation.external(updateSamsungImage);   // ← add this line
 
     await ctx.answerCallbackQuery();   // first line of every button handler
 

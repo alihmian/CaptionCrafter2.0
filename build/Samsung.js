@@ -27,10 +27,10 @@ bot.use((0, grammy_1.session)({
 bot.use((0, conversations_1.conversations)());
 bot.use((0, hydrate_1.hydrate)());
 // function getOutputPath(ctx: MyContext): string {
-//     return ctx.session.outputPath ?? `./OutPut/iPhone_post_${ctx.from!.id}.png`;
+//     return ctx.session.outputPath ?? `./OutPut/Samsung_post_${ctx.from!.id}.png`;
 // }
 function getOutputPath(ctx) {
-    const fallback = `./OutPut/iPhone_post_${ctx.from?.id ?? "anon"}.png`;
+    const fallback = `./OutPut/samsung_post_${ctx.from?.id ?? "anon"}.png`;
     // optional‑chain ⇒ never touches .outputPath if session is missing
     return ctx.session?.outputPath ?? fallback;
 }
@@ -49,7 +49,7 @@ function collectFormData(ctx) {
     };
 }
 // spawn the Python script to compose the image
-async function updateiPhoneImage(ctx) {
+async function updateSamsungImage(ctx) {
     const { GALAXYS25ULTRA = "0", GALAXYS24ULTRA = "0", GALAXYS23ULTRA = "0", GALAXYS24FE = "0", GALAXYA56 = "0", GALAXYA35 = "0", GALAXYA16 = "0", GALAXYA06 = "0", } = ctx.session;
     const outputPath = getOutputPath(ctx);
     ctx.session.outputPath = outputPath;
@@ -74,7 +74,7 @@ async function updateiPhoneImage(ctx) {
         "--output_path",
         outputPath,
     ];
-    log("Calling Python iPhone.py with args", args);
+    log("Calling Python Samsung.py with args", args);
     const result = (0, child_process_1.spawnSync)("python3", args, { stdio: "inherit" });
     if (result.error)
         log("Python error", result.error);
@@ -116,7 +116,7 @@ async function handleFieldInput(conversation, ctx, options, buildMenu) {
     await ctx.api.deleteMessage(ctx.chat.id, question.message_id).catch(() => {
         /* ignore */
     });
-    await conversation.external(updateiPhoneImage);
+    await conversation.external(updateSamsungImage);
     await ctx.editMessageReplyMarkup({ reply_markup: updatedMenu });
 }
 // --------------------------------------------------
@@ -145,21 +145,21 @@ function buildFormMenu(conversation, data) {
         .text("🧹", (ctx) => ctx.conversation.enter("clearFormConversation")));
 }
 // --------------------------------------------------
-//  Conversation generators for each iPhone field
+//  Conversation generators for each Samsung field
 // --------------------------------------------------
-function createiPhoneConversation(fieldName, prompt) {
+function createSamsungConversation(fieldName, prompt) {
     return async function (conversation, ctx) {
         await handleFieldInput(conversation, ctx, { fieldName, promptMessage: prompt }, buildFormMenu);
     };
 }
-const GALAXYS25ULTRAConversation = createiPhoneConversation("GALAXYS25ULTRA", "لطفا مقدار  Galaxy S25 Ultraرا وارد کنید");
-const GALAXYS24ULTRAConversation = createiPhoneConversation("GALAXYS24ULTRA", "لطفا مقدار Galaxy S24 Ultraرا وارد کنید");
-const GALAXYS23ULTRAConversation = createiPhoneConversation("GALAXYS23ULTRA", "لطفا مقدار Galaxy S25 plusرا وارد کنید");
-const GALAXYS24FEConversation = createiPhoneConversation("GALAXYS24FE", "لطفا مقدار Galaxy S24 FEرا وارد کنید");
-const GALAXYA56Conversation = createiPhoneConversation("GALAXYA56", "لطفا مقدار Galaxy A56 را وارد کنید");
-const GALAXYA35Conversation = createiPhoneConversation("GALAXYA35", "لطفا مقدار Galaxy A35را وارد کنید");
-const GALAXYA16Conversation = createiPhoneConversation("GALAXYA16", "لطفا مقدار Galaxy A16 را وارد کنید");
-const GALAXYA06Conversation = createiPhoneConversation("GALAXYA06", "لطفا مقدار Galaxy A06 را وارد کنید");
+const GALAXYS25ULTRAConversation = createSamsungConversation("GALAXYS25ULTRA", "لطفا مقدار  Galaxy S25 Ultraرا وارد کنید");
+const GALAXYS24ULTRAConversation = createSamsungConversation("GALAXYS24ULTRA", "لطفا مقدار Galaxy S24 Ultraرا وارد کنید");
+const GALAXYS23ULTRAConversation = createSamsungConversation("GALAXYS23ULTRA", "لطفا مقدار Galaxy S25 plusرا وارد کنید");
+const GALAXYS24FEConversation = createSamsungConversation("GALAXYS24FE", "لطفا مقدار Galaxy S24 FEرا وارد کنید");
+const GALAXYA56Conversation = createSamsungConversation("GALAXYA56", "لطفا مقدار Galaxy A56 را وارد کنید");
+const GALAXYA35Conversation = createSamsungConversation("GALAXYA35", "لطفا مقدار Galaxy A35را وارد کنید");
+const GALAXYA16Conversation = createSamsungConversation("GALAXYA16", "لطفا مقدار Galaxy A16 را وارد کنید");
+const GALAXYA06Conversation = createSamsungConversation("GALAXYA06", "لطفا مقدار Galaxy A06 را وارد کنید");
 // clear form conversation
 async function clearFormConversation(conversation, ctx) {
     await ctx.answerCallbackQuery();
@@ -173,7 +173,7 @@ async function clearFormConversation(conversation, ctx) {
 }
 async function finishConversation(conversation, ctx) {
     var _a;
-    await conversation.external(updateiPhoneImage); // ← add this line
+    await conversation.external(updateSamsungImage); // ← add this line
     await ctx.answerCallbackQuery(); // first line of every button handler
     // 1) Gather final form data for logging or summarizing
     const finalData = await conversation.external((ctx) => collectFormData(ctx));

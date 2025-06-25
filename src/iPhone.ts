@@ -249,14 +249,14 @@ function createiPhoneConversation(fieldName: iPhoneField, prompt: string) {
     };
 }
 
-const IPHONE16PROMAXConversation = createiPhoneConversation("IPHONE16PROMAX", "لطفا مقدار  Pro Max 16 را وارد کنید");
-const IPHONE16PROConversation = createiPhoneConversation("IPHONE16PRO", "لطفا مقدار 16 Pro را وارد کنید");
-const IPHONE16NORMALConversation = createiPhoneConversation("IPHONE16NORMAL", "لطفا مقدار 16 Normal را وارد کنید");
-const IPHONE15PROMAXConversation = createiPhoneConversation("IPHONE15PROMAX", "لطفا مقدار 15 Pro Max را وارد کنید");
-const IPHONE15PROConversation = createiPhoneConversation("IPHONE15PRO", "لطفا مقدار 15 Pro را وارد کنید");
-const IPHONE14NORMALConversation = createiPhoneConversation("IPHONE14NORMAL", "لطفا مقدار 14 Normal را وارد کنید");
-const IPHONE13PROMAXConversation = createiPhoneConversation("IPHONE13PROMAX", "لطفا مقدار 13 Pro Max  را وارد کنید");
-const IPHONE13PROConversation = createiPhoneConversation("IPHONE13PRO", "لطفا مقدار 13 Pro  را وارد کنید");
+const IPHONE16PROMAXConversation = createiPhoneConversation("IPHONE16PROMAX", "لطفا مقدار   iPhone 16 Pro Max  را وارد کنید");
+const IPHONE16PROConversation = createiPhoneConversation("IPHONE16PRO", "لطفا مقدار iPhone 16 Pro را وارد کنید");
+const IPHONE16NORMALConversation = createiPhoneConversation("IPHONE16NORMAL", "لطفا مقدار iPhone 16 Normal را وارد کنید");
+const IPHONE15PROMAXConversation = createiPhoneConversation("IPHONE15PROMAX", "لطفا مقدار iPhone 15 Pro Max را وارد کنید");
+const IPHONE15PROConversation = createiPhoneConversation("IPHONE15PRO", "لطفا مقدار iPhone 15 Pro را وارد کنید");
+const IPHONE14NORMALConversation = createiPhoneConversation("IPHONE14NORMAL", "لطفا مقدار iPhone 14 Normal را وارد کنید");
+const IPHONE13PROMAXConversation = createiPhoneConversation("IPHONE13PROMAX", "لطفا مقدار iPhone 13 Pro Max  را وارد کنید");
+const IPHONE13PROConversation = createiPhoneConversation("IPHONE13PRO", "لطفا مقدار iPhone 13 Pro  را وارد کنید");
 
 // clear form conversation
 async function clearFormConversation(conversation: FieldConversation, ctx: FieldContext) {

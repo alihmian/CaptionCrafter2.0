@@ -604,8 +604,9 @@ bot.command("unblock", async (ctx) => {
     for (const uid of OWNERS) {
         await bot.api.setMyCommands(
             [
-                { command: "block", description: "Block a user by ID" },
-                { command: "unblock", description: "Unblock a user" },
+                { command: "start", description: "رباتو روشن کن!" },
+                { command: "block", description: "با کمک آی‌دی یوزر مورد نظرو بلاک کن" },
+                { command: "unblock", description: "یوزر رو از بلاکی در بیار" },
             ],
             { scope: { type: "chat", chat_id: uid } },
         );
@@ -614,6 +615,7 @@ bot.command("unblock", async (ctx) => {
     // finally start the bot
     await bot.start();
 })();
+
 
 
 bot.catch((err) => {

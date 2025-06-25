@@ -249,7 +249,7 @@ function createiPhoneConversation(fieldName: iPhoneField, prompt: string) {
     };
 }
 
-const GALAXYS25ULTRAConversation = createiPhoneConversation("GALAXYS25ULTRA", "لطفا مقدار  Pro Max 16 را وارد کنید");
+const GALAXYS25ULTRAConversation = createiPhoneConversation("GALAXYS25ULTRA", "لطفا مقدار  Galaxy S25 Ultraرا وارد کنید");
 const GALAXYS24ULTRAConversation = createiPhoneConversation("GALAXYS24ULTRA", "لطفا مقدار Galaxy S24 Ultraرا وارد کنید");
 const GALAXYS23ULTRAConversation = createiPhoneConversation("GALAXYS23ULTRA", "لطفا مقدار Galaxy S25 plusرا وارد کنید");
 const GALAXYS24FEConversation = createiPhoneConversation("GALAXYS24FE", "لطفا مقدار Galaxy S24 FEرا وارد کنید");

@@ -1,56 +1,10 @@
 from PIL import Image, ImageDraw
-from text_utils import draw_text_no_box
+from text_utils import draw_text_no_box, farsi_fmt
 from date_util import shamsi, day_of_week
 import argparse
 import re
 from typing import Union
-
-DEFAULT_IS_RTL: bool = False
-
-
-def to_farsi_numerals(text: str) -> str:
-    western_to_farsi = {
-        "0": "۰",
-        "1": "۱",
-        "2": "۲",
-        "3": "۳",
-        "4": "۴",
-        "5": "۵",
-        "6": "۶",
-        "7": "۷",
-        "8": "۸",
-        "9": "۹",
-    }
-    return "".join(western_to_farsi.get(ch, ch) for ch in text)
-
-
-_persian2latin = str.maketrans("۰۱۲۳۴۵۶۷۸۹", "0123456789")
-_thousands_sep = "٫"  # U+066C  (looks right‑to‑left, unlike ‘,’)
-
-
-def normalise_number(raw: str) -> int:
-    """
-    1) Bring every digit to Latin 0‑9
-    2) Treat Persian decimal mark (٫) and ASCII dot as the SAME
-    3) Throw away everything else
-    4) If you still have >1 dot, the dots were thousands‑seps ⇒ drop them
-    """
-    s = raw.translate(_persian2latin)
-    s = s.replace("٫", ".")
-    # keep only digits or a dot
-    s = re.sub(r"[^0-9.]", "", s)
-
-    if s.count(".") > 1:  # they were thousands‑separators
-        s = s.replace(".", "")
-    return int(float(s))  # works even if user typed a decimal fraction
-
-
-def farsi_fmt(num: Union[int, str]) -> str:
-    """Return a nicely‑grouped Persian string such as ۸٬۵۶۸٬۰۷۴٬۳۰۰"""
-    if isinstance(num, str):
-        num = normalise_number(num)
-    s = f"{num:,}".replace(",", _thousands_sep)  # add RTL comma
-    return to_farsi_numerals(s)
+from config import DEFAULT_IS_RTL
 
 
 def create_crypto_post(
@@ -140,15 +94,33 @@ def create_crypto_post(
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate a crypto price image.")
-    parser.add_argument("--IPHONE16PROMAX", type=str, default="0", help="Price of IPHONE16PROMAX")
-    parser.add_argument("--IPHONE16PRO", type=str, default="0", help="Price of IPHONE16PRO")
-    parser.add_argument("--IPHONE16NORMAL", type=str, default="0", help="Price of IPHONE16NORMAL")
-    parser.add_argument("--IPHONE15PROMAX", type=str, default="0", help="Price of IPHONE15PROMAX")
-    parser.add_argument("--IPHONE15PRO", type=str, default="0", help="Price of Binance Coin")
-    parser.add_argument("--IPHONE14NORMAL", type=str, default="0", help="Price of IPHONE14NORMAL")
-    parser.add_argument("--IPHONE13PROMAX", type=str, default="0", help="Price of USD Coin")
-    parser.add_argument("--IPHONE13PRO", type=str, default="0", help="Price of IPHONE13PRO")
-    parser.add_argument("--output_path", type=str, required=True, help="Path to save the image")
+    parser.add_argument(
+        "--IPHONE16PROMAX", type=str, default="0", help="Price of IPHONE16PROMAX"
+    )
+    parser.add_argument(
+        "--IPHONE16PRO", type=str, default="0", help="Price of IPHONE16PRO"
+    )
+    parser.add_argument(
+        "--IPHONE16NORMAL", type=str, default="0", help="Price of IPHONE16NORMAL"
+    )
+    parser.add_argument(
+        "--IPHONE15PROMAX", type=str, default="0", help="Price of IPHONE15PROMAX"
+    )
+    parser.add_argument(
+        "--IPHONE15PRO", type=str, default="0", help="Price of Binance Coin"
+    )
+    parser.add_argument(
+        "--IPHONE14NORMAL", type=str, default="0", help="Price of IPHONE14NORMAL"
+    )
+    parser.add_argument(
+        "--IPHONE13PROMAX", type=str, default="0", help="Price of USD Coin"
+    )
+    parser.add_argument(
+        "--IPHONE13PRO", type=str, default="0", help="Price of IPHONE13PRO"
+    )
+    parser.add_argument(
+        "--output_path", type=str, required=True, help="Path to save the image"
+    )
 
     args = parser.parse_args()
 

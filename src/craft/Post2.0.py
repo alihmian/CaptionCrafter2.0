@@ -1,10 +1,8 @@
 from PIL import Image, ImageDraw
 from text_utils import draw_text_no_box, draw_text_in_box
-from date_util import shamsi,  georgian, day_of_week, arabic
+from date_util import shamsi, georgian, day_of_week, arabic
+from config import arabic_days_into_future, DEFAULT_IS_RTL
 import argparse
-
-DEFAULT_IS_RTL: bool = False
-arabic_days_into_future = 1
 
 
 def create_newspaper_image(
@@ -126,21 +124,25 @@ def create_newspaper_image(
         alignment="center",
         font_size=date_font_size,
         is_rtl=DEFAULT_IS_RTL,
-        color=date_color
+        color=date_color,
     )
 
     draw_text_no_box(
         draw,
-        arabic(year=True, month=True, day=True, days_into_future=arabic_days_into_future, language="arabic"),
+        arabic(
+            year=True,
+            month=True,
+            day=True,
+            days_into_future=arabic_days_into_future,
+            language="arabic",
+        ),
         fonts["arabic_date"],
         *positions["arabic_date"],
         alignment="center",
         font_size=date_font_size,
         is_rtl=DEFAULT_IS_RTL,
         color=date_color,
-        
     )
-
 
     draw_text_no_box(
         draw,
@@ -149,7 +151,7 @@ def create_newspaper_image(
         *positions["english_date"],
         alignment="left",
         font_size=date_font_size,
-        color=date_color
+        color=date_color,
     )
     draw_text_no_box(
         draw,
@@ -161,7 +163,7 @@ def create_newspaper_image(
         alignment="right",
         font_size=date_font_size,
         is_rtl=DEFAULT_IS_RTL,
-        color=date_color
+        color=date_color,
     )
 
     # Save the final image.

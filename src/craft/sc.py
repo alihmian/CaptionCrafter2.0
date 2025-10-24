@@ -1,8 +1,7 @@
 from PIL import Image, ImageDraw, ImageOps
 from text_utils import draw_text_no_box, draw_text_in_box
 import argparse
-
-DEFAULT_IS_RTL: bool = False
+from config import DEFAULT_IS_RTL
 
 
 def create_newspaper_image(
@@ -102,7 +101,6 @@ def create_newspaper_image(
         line_spacing=1.4,
     )
 
-
     # Save the final image.
     print("python code log: created news paper image.")
     base_img.convert("RGB").save(output_path, format="JPEG", quality=95)
@@ -135,7 +133,9 @@ if __name__ == "__main__":
     parser.add_argument(
         "--main_headline_text", type=str, required=True, help="The main headline text."
     )
-    parser.add_argument("--source_text", type=str, required=True, help="The source text.")
+    parser.add_argument(
+        "--source_text", type=str, required=True, help="The source text."
+    )
     parser.add_argument(
         "--output_path", type=str, required=True, help="Path to save the final image."
     )

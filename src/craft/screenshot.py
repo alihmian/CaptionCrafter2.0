@@ -2,9 +2,7 @@ from PIL import Image, ImageDraw
 from text_utils import draw_text_no_box, draw_text_in_box
 from date_util import shamsi, georgian, day_of_week, arabic
 import argparse
-
-DEFAULT_IS_RTL: bool = False
-arabic_days_into_future = 1
+from config import DEFAULT_IS_RTL
 
 
 def create_newspaper_image(

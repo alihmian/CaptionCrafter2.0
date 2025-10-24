@@ -10,6 +10,8 @@ from PIL import Image, ImageDraw, ImageFont
 import arabic_reshaper
 from bidi.algorithm import get_display
 from typing import List, Tuple, Optional, Union
+import re
+
 
 # Default configuration constants
 DEFAULT_COLOR: Union[str, Tuple[int, int, int]] = "black"
@@ -256,7 +258,7 @@ def draw_text_in_box(
     #         "vertical_mode must be 'top_to_bottom', 'center_expanded', or 'bottom_to_top'."
     #     )
 
-    # common_h = max(line_heights) 
+    # common_h = max(line_heights)
 
     # # Draw each line with specified horizontal alignment
     # for idx, line in enumerate(shaped_lines):
@@ -281,13 +283,13 @@ def draw_text_in_box(
     #     current_y += common_h * line_spacing
     #     if current_y > box_bottom:
     #         break
-    boxes      = [draw.textbbox((0,0), l, font=font) for l in shaped_lines]
-    line_sizes = [(r-l, b-t) for (l,t,r,b) in boxes]
-    first_top  = boxes[0][1]                         # may be negative
+    boxes = [draw.textbbox((0, 0), l, font=font) for l in shaped_lines]
+    line_sizes = [(r - l, b - t) for (l, t, r, b) in boxes]
+    first_top = boxes[0][1]  # may be negative
 
     total_text_height = (
-        sum(h for _, h in line_sizes) +
-        (len(boxes)-1)*(line_spacing-1)*line_sizes[0][1]
+        sum(h for _, h in line_sizes)
+        + (len(boxes) - 1) * (line_spacing - 1) * line_sizes[0][1]
     )
 
     # ── choose starting baseline according to vertical_mode ──────────────
@@ -298,17 +300,19 @@ def draw_text_in_box(
     elif vertical_mode == "bottom_to_top":
         current_y = box_bottom - total_text_height
     else:
-        raise ValueError("vertical_mode must be 'top_to_bottom', 'center_expanded', or 'bottom_to_top'.")
+        raise ValueError(
+            "vertical_mode must be 'top_to_bottom', 'center_expanded', or 'bottom_to_top'."
+        )
 
-    current_y -= first_top           # compensate for the glyph ascent
+    current_y -= first_top  # compensate for the glyph ascent
     # ─────────────────────────────────────────────────────────────────────
 
-    for (l,t,r,b), (w,h), line in zip(boxes, line_sizes, shaped_lines):
+    for (l, t, r, b), (w, h), line in zip(boxes, line_sizes, shaped_lines):
         if alignment == "left":
             current_x = box_left
         elif alignment == "center":
-            current_x = box_left + (box_width - w)/2
-        else:                          # "right"
+            current_x = box_left + (box_width - w) / 2
+        else:  # "right"
             current_x = box_right - w
 
         draw.text((current_x, current_y - t), line, font=font, fill=color)
@@ -367,3 +371,48 @@ def draw_text_no_box(
 
     # Draw text on the image
     draw.text((adjusted_x, y), prepared_text, font=font, fill=color)
+
+
+def to_farsi_numerals(text: str) -> str:
+    western_to_farsi = {
+        "0": "۰",
+        "1": "۱",
+        "2": "۲",
+        "3": "۳",
+        "4": "۴",
+        "5": "۵",
+        "6": "۶",
+        "7": "۷",
+        "8": "۸",
+        "9": "۹",
+    }
+    return "".join(western_to_farsi.get(ch, ch) for ch in text)
+
+
+_persian2latin = str.maketrans("۰۱۲۳۴۵۶۷۸۹", "0123456789")
+_thousands_sep = "٫"  # U+066C  (looks right‑to‑left, unlike ‘,’)
+
+
+def normalise_number(raw: str) -> int:
+    """
+    1) Bring every digit to Latin 0‑9
+    2) Treat Persian decimal mark (٫) and ASCII dot as the SAME
+    3) Throw away everything else
+    4) If you still have >1 dot, the dots were thousands‑seps ⇒ drop them
+    """
+    s = raw.translate(_persian2latin)
+    s = s.replace("٫", ".")
+    # keep only digits or a dot
+    s = re.sub(r"[^0-9.]", "", s)
+
+    if s.count(".") > 1:  # they were thousands‑separators
+        s = s.replace(".", "")
+    return int(float(s))  # works even if user typed a decimal fraction
+
+
+def farsi_fmt(num: Union[int, str]) -> str:
+    """Return a nicely‑grouped Persian string such as ۸٬۵۶۸٬۰۷۴٬۳۰۰"""
+    if isinstance(num, str):
+        num = normalise_number(num)
+    s = f"{num:,}".replace(",", _thousands_sep)  # add RTL comma
+    return to_farsi_numerals(s)

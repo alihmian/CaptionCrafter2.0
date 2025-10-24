@@ -1,56 +1,8 @@
 from PIL import Image, ImageDraw
-from text_utils import draw_text_no_box
+from text_utils import draw_text_no_box, farsi_fmt
 from date_util import shamsi, day_of_week
 import argparse
-import re
-from typing import Union
-
-DEFAULT_IS_RTL: bool = False
-
-
-def to_farsi_numerals(text: str) -> str:
-    western_to_farsi = {
-        "0": "۰",
-        "1": "۱",
-        "2": "۲",
-        "3": "۳",
-        "4": "۴",
-        "5": "۵",
-        "6": "۶",
-        "7": "۷",
-        "8": "۸",
-        "9": "۹",
-    }
-    return "".join(western_to_farsi.get(ch, ch) for ch in text)
-
-
-_persian2latin = str.maketrans("۰۱۲۳۴۵۶۷۸۹", "0123456789")
-_thousands_sep = "٫"  # U+066C  (looks right‑to‑left, unlike ‘,’)
-
-
-def normalise_number(raw: str) -> int:
-    """
-    1) Bring every digit to Latin 0‑9
-    2) Treat Persian decimal mark (٫) and ASCII dot as the SAME
-    3) Throw away everything else
-    4) If you still have >1 dot, the dots were thousands‑seps ⇒ drop them
-    """
-    s = raw.translate(_persian2latin)
-    s = s.replace("٫", ".")
-    # keep only digits or a dot
-    s = re.sub(r"[^0-9.]", "", s)
-
-    if s.count(".") > 1:  # they were thousands‑separators
-        s = s.replace(".", "")
-    return int(float(s))  # works even if user typed a decimal fraction
-
-
-def farsi_fmt(num: Union[int, str]) -> str:
-    """Return a nicely‑grouped Persian string such as ۸٬۵۶۸٬۰۷۴٬۳۰۰"""
-    if isinstance(num, str):
-        num = normalise_number(num)
-    s = f"{num:,}".replace(",", _thousands_sep)  # add RTL comma
-    return to_farsi_numerals(s)
+from config import DEFAULT_IS_RTL
 
 
 def create_gold_post(
@@ -109,7 +61,6 @@ def create_gold_post(
 
     print("Generated gold image.")
     base_img.convert("RGB").save(output_path, format="JPEG", quality=95)
-
 
 
 if __name__ == "__main__":

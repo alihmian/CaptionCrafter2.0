@@ -1,56 +1,11 @@
 from PIL import Image, ImageDraw
-from text_utils import draw_text_no_box
+from text_utils import draw_text_no_box, farsi_fmt
 from date_util import shamsi, day_of_week
 import argparse
 import re
 from typing import Union
+from config import DEFAULT_IS_RTL
 
-DEFAULT_IS_RTL: bool = False
-
-
-def to_farsi_numerals(text: str) -> str:
-    western_to_farsi = {
-        "0": "۰",
-        "1": "۱",
-        "2": "۲",
-        "3": "۳",
-        "4": "۴",
-        "5": "۵",
-        "6": "۶",
-        "7": "۷",
-        "8": "۸",
-        "9": "۹",
-    }
-    return "".join(western_to_farsi.get(ch, ch) for ch in text)
-
-
-_persian2latin = str.maketrans("۰۱۲۳۴۵۶۷۸۹", "0123456789")
-_thousands_sep = "٫"  # U+066C  (looks right‑to‑left, unlike ‘,’)
-
-
-def normalise_number(raw: str) -> int:
-    """
-    1) Bring every digit to Latin 0‑9
-    2) Treat Persian decimal mark (٫) and ASCII dot as the SAME
-    3) Throw away everything else
-    4) If you still have >1 dot, the dots were thousands‑seps ⇒ drop them
-    """
-    s = raw.translate(_persian2latin)
-    s = s.replace("٫", ".")
-    # keep only digits or a dot
-    s = re.sub(r"[^0-9.]", "", s)
-
-    if s.count(".") > 1:  # they were thousands‑separators
-        s = s.replace(".", "")
-    return int(float(s))  # works even if user typed a decimal fraction
-
-
-def farsi_fmt(num: Union[int, str]) -> str:
-    """Return a nicely‑grouped Persian string such as ۸٬۵۶۸٬۰۷۴٬۳۰۰"""
-    if isinstance(num, str):
-        num = normalise_number(num)
-    s = f"{num:,}".replace(",", _thousands_sep)  # add RTL comma
-    return to_farsi_numerals(s)
 
 
 def create_crypto_post(
@@ -140,15 +95,27 @@ def create_crypto_post(
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate a crypto price image.")
-    parser.add_argument("--GALAXYS25ULTRA", type=str, default="0", help="Price of GALAXYS25ULTRA")
-    parser.add_argument("--GALAXYS24ULTRA", type=str, default="0", help="Price of GALAXYS24ULTRA")
-    parser.add_argument("--GALAXYS23ULTRA", type=str, default="0", help="Price of GALAXYS23ULTRA")
-    parser.add_argument("--GALAXYS24FE", type=str, default="0", help="Price of GALAXYS24FE")
-    parser.add_argument("--GALAXYA56", type=str, default="0", help="Price of Binance Coin")
+    parser.add_argument(
+        "--GALAXYS25ULTRA", type=str, default="0", help="Price of GALAXYS25ULTRA"
+    )
+    parser.add_argument(
+        "--GALAXYS24ULTRA", type=str, default="0", help="Price of GALAXYS24ULTRA"
+    )
+    parser.add_argument(
+        "--GALAXYS23ULTRA", type=str, default="0", help="Price of GALAXYS23ULTRA"
+    )
+    parser.add_argument(
+        "--GALAXYS24FE", type=str, default="0", help="Price of GALAXYS24FE"
+    )
+    parser.add_argument(
+        "--GALAXYA56", type=str, default="0", help="Price of Binance Coin"
+    )
     parser.add_argument("--GALAXYA35", type=str, default="0", help="Price of GALAXYA35")
     parser.add_argument("--GALAXYA16", type=str, default="0", help="Price of USD Coin")
     parser.add_argument("--GALAXYA06", type=str, default="0", help="Price of GALAXYA06")
-    parser.add_argument("--output_path", type=str, required=True, help="Path to save the image")
+    parser.add_argument(
+        "--output_path", type=str, required=True, help="Path to save the image"
+    )
 
     args = parser.parse_args()
 

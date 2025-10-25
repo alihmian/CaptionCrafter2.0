@@ -1,0 +1,1 @@
+- [ ] removing the token key from the bots themselvs

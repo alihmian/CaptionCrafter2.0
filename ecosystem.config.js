@@ -17,23 +17,14 @@ module.exports = {
       env: {
         NODE_ENV: "production",
         PYTHON: "/root/CaptionCrafter2.0/venv/bin/python",
-        PATH: "/root/CaptionCrafter2.0/venv/bin:/usr/local/bin:/usr/bin:/bin"
+        PATH: "/root/CaptionCrafter2.0/venv/bin:/usr/local/bin:/usr/bin:/bin",
+        BOT_TOKEN: "8056950160:AAGIF7ColbOQH5wF6lhWC2HNAib5mb624K8"
       }
     },
     {
       name: "Currency",
       cwd: "/root/CaptionCrafter2.0",
       script: "build/Currency.js",
-      env: {
-        NODE_ENV: "production",
-        PYTHON: "/root/CaptionCrafter2.0/venv/bin/python",
-        PATH: "/root/CaptionCrafter2.0/venv/bin:/usr/local/bin:/usr/bin:/bin"
-      }
-    },
-    {
-      name: "Post_alt",
-      cwd: "/root/CaptionCrafter2.0",
-      script: "build/bot.js",
       env: {
         NODE_ENV: "production",
         PYTHON: "/root/CaptionCrafter2.0/venv/bin/python",
@@ -94,16 +85,6 @@ module.exports = {
       name: "Car2",
       cwd: "/root/CaptionCrafter2.0",
       script: "build/Car2.js",
-      env: {
-        NODE_ENV: "production",
-        PYTHON: "/root/CaptionCrafter2.0/venv/bin/python",
-        PATH: "/root/CaptionCrafter2.0/venv/bin:/usr/local/bin:/usr/bin:/bin"
-      }
-    },
-    {
-      name: "buuut",
-      cwd: "/root/CaptionCrafter2.0",
-      script: "dist/buuut.js",
       env: {
         NODE_ENV: "production",
         PYTHON: "/root/CaptionCrafter2.0/venv/bin/python",

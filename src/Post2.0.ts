@@ -39,7 +39,12 @@ type FieldConversation = Conversation<MyContext, MyContext>;
 // ----------------------
 // Create the Bot
 // ----------------------
-const bot = new Bot<MyContext>("8056950160:AAGIF7ColbOQH5wF6lhWC2HNAib5mb624K8");
+// const bot = new Bot<MyContext>("8056950160:AAGIF7ColbOQH5wF6lhWC2HNAib5mb624K8");
+const token = process.env.BOT_TOKEN;
+if (!token) {
+    throw new Error("Missing BOT_TOKEN environment variable");
+}
+const bot = new Bot<MyContext>(token);
 
 // Use session, conversations, and hydration middleware
 bot.use(session({

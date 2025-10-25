@@ -48,7 +48,12 @@ const log = (...args) => {
 // ----------------------
 // Create the Bot
 // ----------------------
-const bot = new grammy_1.Bot("8056950160:AAGIF7ColbOQH5wF6lhWC2HNAib5mb624K8");
+// const bot = new Bot<MyContext>("8056950160:AAGIF7ColbOQH5wF6lhWC2HNAib5mb624K8");
+const token = process.env.BOT_TOKEN;
+if (!token) {
+    throw new Error("Missing BOT_TOKEN environment variable");
+}
+const bot = new grammy_1.Bot(token);
 // Use session, conversations, and hydration middleware
 bot.use((0, grammy_1.session)({
     initial: () => ({

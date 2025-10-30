@@ -338,20 +338,25 @@ async function finishConversation(conversation, ctx) {
 }
 // ---- Access Control Gate ----
 bot.use(async (ctx, next) => {
+    // 1) Never send deny messages outside DMs
+    const chatType = ctx.chat?.type; // 'private' | 'group' | 'supergroup' | 'channel'
+    const isDM = chatType === "private";
+    // For channels, there is usually no ctx.from; skip entirely.
+    if (chatType === "channel")
+        return; // do nothing in channels
     const uid = ctx.from?.id;
     if (!uid)
-        return; // ignore updates without user
-    // Always allow admins
-    if ((0, acl_1.isAdmin)(uid))
+        return; // ignore updates without a user
+    // 2) Allow admins/allowed everywhere
+    if ((0, acl_1.isAdmin)(uid) || (0, acl_1.isAllowed)(uid))
         return next();
-    // Allow non-admins to run *only* if they are in allowed list
-    if ((0, acl_1.isAllowed)(uid))
-        return next();
-    // Optional: let unknown users see a short message and stop
-    try {
-        await ctx.reply("⛔️ You are not allowed to use this bot.");
+    // 3) Block silently in groups/supergroups, show message only in DMs
+    if (isDM) {
+        try {
+            await ctx.reply("⛔️ You are not allowed to use this bot.");
+        }
+        catch { }
     }
-    catch { }
     return; // block
 });
 // ----------------------

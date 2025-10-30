@@ -41,6 +41,7 @@ const conversations_1 = require("@grammyjs/conversations");
 const fs = __importStar(require("fs"));
 const child_process_1 = require("child_process");
 const storage_file_1 = require("@grammyjs/storage-file");
+const acl_1 = require("./acl");
 const log = (...args) => {
     const timestamp = new Date().toISOString();
     console.log(`[${timestamp}]`, ...args);
@@ -338,6 +339,24 @@ async function finishConversation(conversation, ctx) {
         console.error("Could not send log to channel:", err);
     }
 }
+// ---- Access Control Gate ----
+bot.use(async (ctx, next) => {
+    const uid = ctx.from?.id;
+    if (!uid)
+        return; // ignore updates without user
+    // Always allow admins
+    if ((0, acl_1.isAdmin)(uid))
+        return next();
+    // Allow non-admins to run *only* if they are in allowed list
+    if ((0, acl_1.isAllowed)(uid))
+        return next();
+    // Optional: let unknown users see a short message and stop
+    try {
+        await ctx.reply("⛔️ You are not allowed to use this bot.");
+    }
+    catch { }
+    return; // block
+});
 // ----------------------
 // Register Conversations
 // ----------------------
@@ -390,8 +409,73 @@ bot.command("start", async (ctx) => {
     ctx.session.mainMessageId = sentMessage.message_id;
     log(`Sent initial menu and stored mainMessageId: ${sentMessage.message_id}`);
 });
+bot.command("add", async (ctx) => {
+    const adminId = ctx.from?.id;
+    if (!adminId || !(0, acl_1.isAdmin)(adminId))
+        return;
+    // 1) If admin replied to a user's message: add that user
+    const repliedUserId = ctx.message?.reply_to_message?.from?.id;
+    if (repliedUserId) {
+        const r = (0, acl_1.addAllowed)(repliedUserId);
+        await ctx.reply(r.added ? `✅ Added ${repliedUserId}` : `ℹ️ ${r.reason}`);
+        return;
+    }
+    // 2) Else parse an explicit numeric ID after the command
+    const text = ctx.message?.text ?? "";
+    const arg = text.replace(/^\/add(@\w+)?\s*/, "").trim(); // handles "/add" and "/add@YourBot"
+    if (!arg) {
+        await ctx.reply("Usage:\n• Reply to a user’s message and send /add\n• Or: /add <telegram_user_id>");
+        return;
+    }
+    if (!/^\d+$/.test(arg)) {
+        await ctx.reply("Provide a numeric Telegram user ID.");
+        return;
+    }
+    const r = (0, acl_1.addAllowed)(arg);
+    await ctx.reply(r.added ? `✅ Added ${arg}` : `ℹ️ ${r.reason}`);
+});
+bot.command("remove", async (ctx) => {
+    const adminId = ctx.from?.id;
+    if (!adminId || !(0, acl_1.isAdmin)(adminId))
+        return;
+    const repliedUserId = ctx.message?.reply_to_message?.from?.id;
+    if (repliedUserId) {
+        const r = (0, acl_1.removeAllowed)(repliedUserId);
+        await ctx.reply(r.removed ? `🗑️ Removed ${repliedUserId}` : `ℹ️ ${r.reason}`);
+        return;
+    }
+    const text = ctx.message?.text ?? "";
+    const arg = text.replace(/^\/remove(@\w+)?\s*/, "").trim();
+    if (!arg) {
+        await ctx.reply("Usage:\n• Reply to a user’s message and send /remove\n• Or: /remove <telegram_user_id>");
+        return;
+    }
+    if (!/^\d+$/.test(arg)) {
+        await ctx.reply("Provide a numeric Telegram user ID.");
+        return;
+    }
+    const r = (0, acl_1.removeAllowed)(arg);
+    await ctx.reply(r.removed ? `🗑️ Removed ${arg}` : `ℹ️ ${r.reason}`);
+});
+bot.command("list", async (ctx) => {
+    const adminId = ctx.from?.id;
+    if (!adminId || !(0, acl_1.isAdmin)(adminId))
+        return;
+    const admins = (0, acl_1.listAdmins)();
+    const allowed = (0, acl_1.listAllowed)();
+    await ctx.reply([
+        "👑 Admins:",
+        admins.length ? admins.map(x => `• ${x}`).join("\n") : "  (none)",
+        "",
+        "✅ Allowed:",
+        allowed.length ? allowed.map(x => `• ${x}`).join("\n") : "  (none)",
+    ].join("\n"));
+});
 bot.api.setMyCommands([
     { command: "start", description: "رباتو روشن کن!" },
+    { command: "list", description: "لیست آی‌دی افرادی که به بات دسترسی دارند." },
+    { command: "remove", description: "با کمک آی‌دی دسترسی استفاده از بات رو بگیر." },
+    { command: "add", description: "با کمک آی‌دی به بات دسترسی بده." },
 ]);
 bot.catch((err) => {
     log("Global error handler caught:", err);

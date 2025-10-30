@@ -11,9 +11,14 @@ import * as fs from "fs";
 import { spawnSync } from "child_process";
 import { GrammyError } from "grammy"; // For error checking
 import { FileAdapter } from "@grammyjs/storage-file";
-import { blocked } from "./blocked";
-import { add, remove } from "./blocked";
-import { OWNERS } from "./OWNERS";
+import {
+    isAdmin,
+    isAllowed,
+    addAllowed,
+    removeAllowed,
+    listAllowed,
+    listAdmins,
+} from "./acl";
 
 
 
@@ -51,29 +56,6 @@ const bot = new Bot<MyContext>("7920936103:AAFgOL7oiW6SZUpm6kZGvJf-_HV2UrUBhZs")
 
 // put near the top of Post2.0.ts
 const warned = new Set<number>();   // keeps us from spamming the user
-
-bot.use(async (ctx, next) => {
-    const uid = ctx.from?.id;
-    if (uid && blocked.has(uid)) {
-        // send the notice only once per session
-        if (!warned.has(uid)) {
-            warned.add(uid);
-
-            if (ctx.callbackQuery) {
-                // user tapped an inline-button
-                await ctx.answerCallbackQuery({
-                    text: "🚫 You’re blocked from using this bot.",
-                    show_alert: true,
-                });
-            } else {
-                // normal message/command
-                await ctx.reply("🚫 You’re blocked from using this bot.");
-            }
-        }
-        return;                      // stop processing the update
-    }
-    return next();
-});
 
 
 // Use session, conversations, and hydration middleware
@@ -500,6 +482,26 @@ async function finishConversation(
 
 }
 
+
+// ---- Access Control Gate ----
+bot.use(async (ctx, next) => {
+    const uid = ctx.from?.id;
+    if (!uid) return; // ignore updates without user
+
+    // Always allow admins
+    if (isAdmin(uid)) return next();
+
+    // Allow non-admins to run *only* if they are in allowed list
+    if (isAllowed(uid)) return next();
+
+    // Optional: let unknown users see a short message and stop
+    try {
+        await ctx.reply("⛔️ You are not allowed to use this bot.");
+    } catch { }
+    return; // block
+});
+
+
 // ----------------------
 // Register Conversations
 // ----------------------
@@ -576,46 +578,89 @@ bot.command("start", async (ctx) => {
     log(`Sent initial menu and stored mainMessageId: ${sentMessage.message_id}`);
 });
 
-const isOwner = (ctx: Context) => ctx.from && OWNERS.has(ctx.from.id);
 
 
-bot.command("block", async (ctx) => {
-    if (!isOwner(ctx)) return;
-    const id = Number(ctx.match.trim());
-    if (!id) return ctx.reply("نحوه‌ٔ استفاده: /block telegram_id");
-    await add(id);
-    ctx.reply(`✅ ${id} blocked`);
-});
 
-bot.command("unblock", async (ctx) => {
-    if (!isOwner(ctx)) return;
-    const id = Number(ctx.match.trim());
-    await remove(id);
-    ctx.reply(`🗑️ ${id} unblocked`);
-});
+bot.command("add", async (ctx) => {
+    const adminId = ctx.from?.id;
+    if (!adminId || !isAdmin(adminId)) return;
 
-(async () => {
-    // public commands
-    await bot.api.setMyCommands([
-        { command: "start", description: "رباتو روشن کن!" },
-    ]);
-
-    // owner-only commands
-    for (const uid of OWNERS) {
-        await bot.api.setMyCommands(
-            [
-                { command: "start", description: "رباتو روشن کن!" },
-                { command: "block", description: "با کمک آی‌دی یوزر مورد نظرو بلاک کن" },
-                { command: "unblock", description: "یوزر رو از بلاکی در بیار" },
-            ],
-            { scope: { type: "chat", chat_id: uid } },
-        );
+    // 1) If admin replied to a user's message: add that user
+    const repliedUserId = ctx.message?.reply_to_message?.from?.id;
+    if (repliedUserId) {
+        const r = addAllowed(repliedUserId);
+        await ctx.reply(r.added ? `✅ Added ${repliedUserId}` : `ℹ️ ${r.reason}`);
+        return;
     }
 
-    // finally start the bot
-    await bot.start();
-})();
+    // 2) Else parse an explicit numeric ID after the command
+    const text = ctx.message?.text ?? "";
+    const arg = text.replace(/^\/add(@\w+)?\s*/, "").trim(); // handles "/add" and "/add@YourBot"
+    if (!arg) {
+        await ctx.reply("Usage:\n• Reply to a user’s message and send /add\n• Or: /add <telegram_user_id>");
+        return;
+    }
+    if (!/^\d+$/.test(arg)) {
+        await ctx.reply("Provide a numeric Telegram user ID.");
+        return;
+    }
+    const r = addAllowed(arg);
+    await ctx.reply(r.added ? `✅ Added ${arg}` : `ℹ️ ${r.reason}`);
+});
 
+
+bot.command("remove", async (ctx) => {
+    const adminId = ctx.from?.id;
+    if (!adminId || !isAdmin(adminId)) return;
+
+    const repliedUserId = ctx.message?.reply_to_message?.from?.id;
+    if (repliedUserId) {
+        const r = removeAllowed(repliedUserId);
+        await ctx.reply(r.removed ? `🗑️ Removed ${repliedUserId}` : `ℹ️ ${r.reason}`);
+        return;
+    }
+
+    const text = ctx.message?.text ?? "";
+    const arg = text.replace(/^\/remove(@\w+)?\s*/, "").trim();
+    if (!arg) {
+        await ctx.reply("Usage:\n• Reply to a user’s message and send /remove\n• Or: /remove <telegram_user_id>");
+        return;
+    }
+    if (!/^\d+$/.test(arg)) {
+        await ctx.reply("Provide a numeric Telegram user ID.");
+        return;
+    }
+    const r = removeAllowed(arg);
+    await ctx.reply(r.removed ? `🗑️ Removed ${arg}` : `ℹ️ ${r.reason}`);
+});
+
+
+bot.command("list", async (ctx) => {
+    const adminId = ctx.from?.id;
+    if (!adminId || !isAdmin(adminId)) return;
+
+    const admins = listAdmins();
+    const allowed = listAllowed();
+    await ctx.reply(
+        [
+            "👑 Admins:",
+            admins.length ? admins.map(x => `• ${x}`).join("\n") : "  (none)",
+            "",
+            "✅ Allowed:",
+            allowed.length ? allowed.map(x => `• ${x}`).join("\n") : "  (none)",
+        ].join("\n")
+    );
+});
+
+
+
+
+bot.api.setMyCommands([
+    { command: "start", description: "رباتو روشن کن!" },
+    { command: "list", description: "لیست آی‌دی افرادی که به بات دسترسی دارند." },
+    { command: "remove", description: "با کمک آی‌دی دسترسی استفاده از بات رو بگیر." },
+    { command: "add", description: "با کمک آی‌دی به بات دسترسی بده." },
+]);
 
 
 bot.catch((err) => {

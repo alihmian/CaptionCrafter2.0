@@ -10,6 +10,15 @@ import {
 import * as fs from "fs";
 import { spawnSync } from "child_process";
 import { FileAdapter } from "@grammyjs/storage-file";
+import {
+    isAdmin,
+    isAllowed,
+    addAllowed,
+    removeAllowed,
+    listAllowed,
+    listAdmins,
+} from "./acl";
+
 
 // --------------------------------------------------
 //  Utility
@@ -318,6 +327,25 @@ async function finishConversation(
 
 
 }
+
+// ---- Access Control Gate ----
+bot.use(async (ctx, next) => {
+    const uid = ctx.from?.id;
+    if (!uid) return; // ignore updates without user
+
+    // Always allow admins
+    if (isAdmin(uid)) return next();
+
+    // Allow non-admins to run *only* if they are in allowed list
+    if (isAllowed(uid)) return next();
+
+    // Optional: let unknown users see a short message and stop
+    try {
+        await ctx.reply("⛔️ You are not allowed to use this bot.");
+    } catch { }
+    return; // block
+});
+
 // --------------------------------------------------
 //  Register conversations
 // --------------------------------------------------
@@ -373,11 +401,93 @@ bot.command("start", async (ctx) => {
     log("Bot started for", userId);
 });
 
-bot.catch((err) => log("Global error", err));
+
+
+
+bot.command("add", async (ctx) => {
+    const adminId = ctx.from?.id;
+    if (!adminId || !isAdmin(adminId)) return;
+
+    // 1) If admin replied to a user's message: add that user
+    const repliedUserId = ctx.message?.reply_to_message?.from?.id;
+    if (repliedUserId) {
+        const r = addAllowed(repliedUserId);
+        await ctx.reply(r.added ? `✅ Added ${repliedUserId}` : `ℹ️ ${r.reason}`);
+        return;
+    }
+
+    // 2) Else parse an explicit numeric ID after the command
+    const text = ctx.message?.text ?? "";
+    const arg = text.replace(/^\/add(@\w+)?\s*/, "").trim(); // handles "/add" and "/add@YourBot"
+    if (!arg) {
+        await ctx.reply("Usage:\n• Reply to a user’s message and send /add\n• Or: /add <telegram_user_id>");
+        return;
+    }
+    if (!/^\d+$/.test(arg)) {
+        await ctx.reply("Provide a numeric Telegram user ID.");
+        return;
+    }
+    const r = addAllowed(arg);
+    await ctx.reply(r.added ? `✅ Added ${arg}` : `ℹ️ ${r.reason}`);
+});
+
+
+bot.command("remove", async (ctx) => {
+    const adminId = ctx.from?.id;
+    if (!adminId || !isAdmin(adminId)) return;
+
+    const repliedUserId = ctx.message?.reply_to_message?.from?.id;
+    if (repliedUserId) {
+        const r = removeAllowed(repliedUserId);
+        await ctx.reply(r.removed ? `🗑️ Removed ${repliedUserId}` : `ℹ️ ${r.reason}`);
+        return;
+    }
+
+    const text = ctx.message?.text ?? "";
+    const arg = text.replace(/^\/remove(@\w+)?\s*/, "").trim();
+    if (!arg) {
+        await ctx.reply("Usage:\n• Reply to a user’s message and send /remove\n• Or: /remove <telegram_user_id>");
+        return;
+    }
+    if (!/^\d+$/.test(arg)) {
+        await ctx.reply("Provide a numeric Telegram user ID.");
+        return;
+    }
+    const r = removeAllowed(arg);
+    await ctx.reply(r.removed ? `🗑️ Removed ${arg}` : `ℹ️ ${r.reason}`);
+});
+
+
+bot.command("list", async (ctx) => {
+    const adminId = ctx.from?.id;
+    if (!adminId || !isAdmin(adminId)) return;
+
+    const admins = listAdmins();
+    const allowed = listAllowed();
+    await ctx.reply(
+        [
+            "👑 Admins:",
+            admins.length ? admins.map(x => `• ${x}`).join("\n") : "  (none)",
+            "",
+            "✅ Allowed:",
+            allowed.length ? allowed.map(x => `• ${x}`).join("\n") : "  (none)",
+        ].join("\n")
+    );
+});
+
+
+
 
 bot.api.setMyCommands([
     { command: "start", description: "رباتو روشن کن!" },
+    { command: "list", description: "لیست آی‌دی افرادی که به بات دسترسی دارند." },
+    { command: "remove", description: "با کمک آی‌دی دسترسی استفاده از بات رو بگیر." },
+    { command: "add", description: "با کمک آی‌دی به بات دسترسی بده." },
 ]);
+
+
+bot.catch((err) => log("Global error", err));
+
 
 bot.start();
 log("Bot running …");

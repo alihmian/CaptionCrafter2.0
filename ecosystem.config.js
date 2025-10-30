@@ -1,15 +1,6 @@
 module.exports = {
   apps: [
-    {
-      name: "Post",
-      cwd: "/root/CaptionCrafter2.0",
-      script: "build/Post.js",
-      env: {
-        NODE_ENV: "production",
-        PYTHON: "/root/CaptionCrafter2.0/venv/bin/python",
-        PATH: "/root/CaptionCrafter2.0/venv/bin:/usr/local/bin:/usr/bin:/bin"
-      }
-    },
+
     {
       name: "Post2",
       cwd: "/root/CaptionCrafter2.0",
@@ -105,6 +96,16 @@ module.exports = {
       name: "iPhone",
       cwd: "/root/CaptionCrafter2.0",
       script: "build/iPhone.js",
+      env: {
+        NODE_ENV: "production",
+        PYTHON: "/root/CaptionCrafter2.0/venv/bin/python",
+        PATH: "/root/CaptionCrafter2.0/venv/bin:/usr/local/bin:/usr/bin:/bin"
+      }
+    },
+    {
+      name: "xiaomi",
+      cwd: "/root/CaptionCrafter2.0",
+      script: "build/xiaomi.js",
       env: {
         NODE_ENV: "production",
         PYTHON: "/root/CaptionCrafter2.0/venv/bin/python",

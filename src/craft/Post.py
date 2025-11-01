@@ -145,7 +145,7 @@ def create_newspaper_image(
         draw,
         day_of_week(days_into_future=days_into_future)
         + " "
-        + shamsi(year=True, month=True, day=True),
+        + shamsi(year=True, month=True, day=True, days_into_future=days_into_future),
         fonts["persian_date"],
         *positions["persian_date"],
         alignment="right",

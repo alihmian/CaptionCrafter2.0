@@ -113,7 +113,17 @@ module.exports = {
       }
     },
     {
-      name: "samsung",
+      name: "report",
+      cwd: "/root/CaptionCrafter2.0",
+      script: "build/report.js",
+      env: {
+        NODE_ENV: "production",
+        PYTHON: "/root/CaptionCrafter2.0/venv/bin/python",
+        PATH: "/root/CaptionCrafter2.0/venv/bin:/usr/local/bin:/usr/bin:/bin"
+      }
+    },
+    {
+      name: "Samsung",
       cwd: "/root/CaptionCrafter2.0",
       script: "build/Samsung.js",
       env: {

@@ -166,46 +166,46 @@ def create_newspaper_image(
     base_img.convert("RGB").save(output_path, format="JPEG", quality=95)
 
 
+# if __name__ == "__main__":
+#     # Example usage in non-composed mode (function does full composition)
+#     create_newspaper_image(
+#         user_image_path="UserImages/img.png",
+#         overline_text="سوختوخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فار قاچاق در خليج فارس",
+#         main_headline_text="ترامپ با سفر به تهران باوخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فار آقاى پزشكيان ديدار مى كند",
+#         output_path="./OutPut/report.png",
+#         dynamic_font_size=True,
+#     )
+
 if __name__ == "__main__":
-    # Example usage in non-composed mode (function does full composition)
-    create_newspaper_image(
-        user_image_path="UserImages/img.png",
-        overline_text="سوختوخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فار قاچاق در خليج فارس",
-        main_headline_text="ترامپ با سفر به تهران باوخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فاروخت قاچاق در خليج فار آقاى پزشكيان ديدار مى كند",
-        output_path="./OutPut/report.png",
-        dynamic_font_size=True,
+    parser = argparse.ArgumentParser(
+        description="Generate a newspaper-style image with text overlays and optional watermark."
+    )
+    parser.add_argument(
+        "--user_image_path",
+        type=str,
+        required=True,
+        help="Path to the user image or pre-composed base image.",
+    )
+    parser.add_argument(
+        "--overline_text", type=str, required=True, help="The overline text."
+    )
+    parser.add_argument(
+        "--main_headline_text", type=str, required=True, help="The main headline text."
+    )
+    parser.add_argument(
+        "--output_path", type=str, required=True, help="Path to save the final image."
     )
 
-# if __name__ == "__main__":
-#     parser = argparse.ArgumentParser(
-#         description="Generate a newspaper-style image with text overlays and optional watermark."
-#     )
-#     parser.add_argument(
-#         "--user_image_path",
-#         type=str,
-#         required=True,
-#         help="Path to the user image or pre-composed base image.",
-#     )
-#     parser.add_argument(
-#         "--overline_text", type=str, required=True, help="The overline text."
-#     )
-#     parser.add_argument(
-#         "--main_headline_text", type=str, required=True, help="The main headline text."
-#     )
-#     parser.add_argument(
-#         "--output_path", type=str, required=True, help="Path to save the final image."
-#     )
+    parser.add_argument(
+        "--events_text", type=str, default=None, help="Optional text for event 1."
+    )
 
-#     parser.add_argument(
-#         "--events_text", type=str, default=None, help="Optional text for event 1."
-#     )
+    args = parser.parse_args()
 
-#     args = parser.parse_args()
-
-#     create_newspaper_image(
-#         user_image_path=args.user_image_path,
-#         overline_text=args.overline_text,
-#         main_headline_text=args.main_headline_text,
-#         output_path=args.output_path,
-#         events_text=args.events_text,
-#     )
+    create_newspaper_image(
+        user_image_path=args.user_image_path,
+        overline_text=args.overline_text,
+        main_headline_text=args.main_headline_text,
+        output_path=args.output_path,
+        events_text=args.events_text,
+    )

@@ -150,16 +150,7 @@ def create_newspaper_image(
         color=date_color,
         # color=(209, 128, 128),
     )
-    draw_text_no_box(
-        draw,
-        clock_time(show_hours=True, show_minutes=True, language="english"),
-        fonts["time"],
-        *positions["time"],
-        alignment="center",
-        color="white",
-        font_size=45,
-        is_rtl=DEFAULT_IS_RTL,
-    )
+
 
     # Save the final image.
     print("python code log: created news paper image.")

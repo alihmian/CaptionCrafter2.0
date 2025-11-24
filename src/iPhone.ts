@@ -228,21 +228,21 @@ function buildFormMenu(conversation: Conversation<MyContext, any>, data: FormDat
     return (
         conversation
             .menu("form")
-            .text(data.IPHONE16PROMAX ? "16 Pro Max" : "16 Pro Max", (ctx) => ctx.conversation.enter("IPHONE16PROMAXConversation"))
+            .text(data.IPHONE16PROMAX ? "17 Pro Max" : "17 Pro Max", (ctx) => ctx.conversation.enter("IPHONE16PROMAXConversation"))
             .row()
-            .text(data.IPHONE16PRO ? "16 Pro " : "16 Pro ", (ctx) => ctx.conversation.enter("IPHONE16PROConversation"))
+            .text(data.IPHONE16PRO ? "16 Pro Max " : "16 Pro Max ", (ctx) => ctx.conversation.enter("IPHONE16PROConversation"))
             .row()
-            .text(data.IPHONE16NORMAL ? "16 Normal " : "16 Normal ", (ctx) => ctx.conversation.enter("IPHONE16NORMALConversation"))
+            .text(data.IPHONE16NORMAL ? "16 Pro " : "16 Pro ", (ctx) => ctx.conversation.enter("IPHONE16NORMALConversation"))
             .row()
-            .text(data.IPHONE15PROMAX ? "15 Pro Max " : "15 Pro Max ", (ctx) => ctx.conversation.enter("IPHONE15PROMAXConversation"))
+            .text(data.IPHONE15PROMAX ? "16 Normal " : "16 Normal ", (ctx) => ctx.conversation.enter("IPHONE15PROMAXConversation"))
             .row()
-            .text(data.IPHONE15PRO ? "15 Pro " : "15 Pro ", (ctx) => ctx.conversation.enter("IPHONE15PROConversation"))
+            .text(data.IPHONE15PRO ? "15 Pro Max " : "15 Pro Max ", (ctx) => ctx.conversation.enter("IPHONE15PROConversation"))
             .row()
-            .text(data.IPHONE14NORMAL ? "14 Normal " : "14 Normal ", (ctx) => ctx.conversation.enter("IPHONE14NORMALConversation"))
+            .text(data.IPHONE14NORMAL ? "15 Pro " : "15 Pro ", (ctx) => ctx.conversation.enter("IPHONE14NORMALConversation"))
             .row()
-            .text(data.IPHONE13PROMAX ? "13 Pro Max " : "13 Pro Max ", (ctx) => ctx.conversation.enter("IPHONE13PROMAXConversation"))
+            .text(data.IPHONE13PROMAX ? "15 Normal " : "15 Normal ", (ctx) => ctx.conversation.enter("IPHONE13PROMAXConversation"))
             .row()
-            .text(data.IPHONE13PROMAX ? "13 Pro " : "13 Pro ", (ctx) => ctx.conversation.enter("IPHONE13PROConversation"))
+            .text(data.IPHONE13PROMAX ? "14 Pro Max " : "14 Pro Max ", (ctx) => ctx.conversation.enter("IPHONE13PROConversation"))
             .row()
             .text("فایل ✅", (ctx) => ctx.conversation.enter("finishConversation"))
             .text("🧹", (ctx) => ctx.conversation.enter("clearFormConversation"))
@@ -258,14 +258,14 @@ function createiPhoneConversation(fieldName: iPhoneField, prompt: string) {
     };
 }
 
-const IPHONE16PROMAXConversation = createiPhoneConversation("IPHONE16PROMAX", "لطفا مقدار   iPhone 16 Pro Max  را وارد کنید");
-const IPHONE16PROConversation = createiPhoneConversation("IPHONE16PRO", "لطفا مقدار iPhone 16 Pro را وارد کنید");
-const IPHONE16NORMALConversation = createiPhoneConversation("IPHONE16NORMAL", "لطفا مقدار iPhone 16 Normal را وارد کنید");
-const IPHONE15PROMAXConversation = createiPhoneConversation("IPHONE15PROMAX", "لطفا مقدار iPhone 15 Pro Max را وارد کنید");
-const IPHONE15PROConversation = createiPhoneConversation("IPHONE15PRO", "لطفا مقدار iPhone 15 Pro را وارد کنید");
-const IPHONE14NORMALConversation = createiPhoneConversation("IPHONE14NORMAL", "لطفا مقدار iPhone 14 Normal را وارد کنید");
-const IPHONE13PROMAXConversation = createiPhoneConversation("IPHONE13PROMAX", "لطفا مقدار iPhone 13 Pro Max  را وارد کنید");
-const IPHONE13PROConversation = createiPhoneConversation("IPHONE13PRO", "لطفا مقدار iPhone 13 Pro  را وارد کنید");
+const IPHONE16PROMAXConversation = createiPhoneConversation("IPHONE16PROMAX", "لطفا مقدار   iPhone 17 Pro Max  را وارد کنید");
+const IPHONE16PROConversation = createiPhoneConversation("IPHONE16PRO", "لطفا مقدار iPhone 16 Pro Max را وارد کنید");
+const IPHONE16NORMALConversation = createiPhoneConversation("IPHONE16NORMAL", "لطفا مقدار iPhone 16 Pro را وارد کنید");
+const IPHONE15PROMAXConversation = createiPhoneConversation("IPHONE15PROMAX", "لطفا مقدار iPhone 16 Normal را وارد کنید");
+const IPHONE15PROConversation = createiPhoneConversation("IPHONE15PRO", "لطفا مقدار iPhone 15 Pro Max را وارد کنید");
+const IPHONE14NORMALConversation = createiPhoneConversation("IPHONE14NORMAL", "لطفا مقدار iPhone 15 Pro را وارد کنید");
+const IPHONE13PROMAXConversation = createiPhoneConversation("IPHONE13PROMAX", "لطفا مقدار iPhone 15 Normal  را وارد کنید");
+const IPHONE13PROConversation = createiPhoneConversation("IPHONE13PRO", "لطفا مقدار iPhone 14 Pro Max  را وارد کنید");
 
 // clear form conversation
 async function clearFormConversation(conversation: FieldConversation, ctx: FieldContext) {
@@ -330,24 +330,24 @@ async function finishConversation(
 
 // ---- Access Control Gate ----
 bot.use(async (ctx, next) => {
-  // 1) Never send deny messages outside DMs
-  const chatType = ctx.chat?.type; // 'private' | 'group' | 'supergroup' | 'channel'
-  const isDM = chatType === "private";
+    // 1) Never send deny messages outside DMs
+    const chatType = ctx.chat?.type; // 'private' | 'group' | 'supergroup' | 'channel'
+    const isDM = chatType === "private";
 
-  // For channels, there is usually no ctx.from; skip entirely.
-  if (chatType === "channel") return; // do nothing in channels
+    // For channels, there is usually no ctx.from; skip entirely.
+    if (chatType === "channel") return; // do nothing in channels
 
-  const uid = ctx.from?.id;
-  if (!uid) return; // ignore updates without a user
+    const uid = ctx.from?.id;
+    if (!uid) return; // ignore updates without a user
 
-  // 2) Allow admins/allowed everywhere
-  if (isAdmin(uid) || isAllowed(uid)) return next();
+    // 2) Allow admins/allowed everywhere
+    if (isAdmin(uid) || isAllowed(uid)) return next();
 
-  // 3) Block silently in groups/supergroups, show message only in DMs
-  if (isDM) {
-    try { await ctx.reply("⛔️ You are not allowed to use this bot."); } catch {}
-  }
-  return; // block
+    // 3) Block silently in groups/supergroups, show message only in DMs
+    if (isDM) {
+        try { await ctx.reply("⛔️ You are not allowed to use this bot."); } catch { }
+    }
+    return; // block
 });
 
 // --------------------------------------------------
@@ -370,21 +370,21 @@ bot.use(createConversation(finishConversation, "finishConversation"));
 //  Stand‑alone menu instance (needed for /start)
 // --------------------------------------------------
 export const formMenu = new Menu<MyContext>("form", { onMenuOutdated: false })
-    .text((ctx) => collectFormData(ctx).IPHONE16PROMAX ? "16 Pro Max" : "16 Pro Max", (ctx) => ctx.conversation.enter("IPHONE16PROMAXConversation"))
+    .text((ctx) => collectFormData(ctx).IPHONE16PROMAX ? "17 Pro Max" : "17 Pro Max", (ctx) => ctx.conversation.enter("IPHONE16PROMAXConversation"))
     .row()
-    .text((ctx) => collectFormData(ctx).IPHONE16PRO ? "16 Pro " : "16 Pro ", (ctx) => ctx.conversation.enter("IPHONE16PROConversation"))
+    .text((ctx) => collectFormData(ctx).IPHONE16PRO ? "16 Pro Max " : "16 Pro Max ", (ctx) => ctx.conversation.enter("IPHONE16PROConversation"))
     .row()
-    .text((ctx) => collectFormData(ctx).IPHONE16NORMAL ? "16 Normal " : "16 Normal ", (ctx) => ctx.conversation.enter("IPHONE16NORMALConversation"))
+    .text((ctx) => collectFormData(ctx).IPHONE16NORMAL ? "16 Pro " : "16 Pro ", (ctx) => ctx.conversation.enter("IPHONE16NORMALConversation"))
     .row()
-    .text((ctx) => collectFormData(ctx).IPHONE15PROMAX ? "15 Pro Max " : "15 Pro Max ", (ctx) => ctx.conversation.enter("IPHONE15PROMAXConversation"))
+    .text((ctx) => collectFormData(ctx).IPHONE15PROMAX ? "16 Normal " : "16 Normal ", (ctx) => ctx.conversation.enter("IPHONE15PROMAXConversation"))
     .row()
-    .text((ctx) => collectFormData(ctx).IPHONE15PRO ? "15 Pro " : "15 Pro ", (ctx) => ctx.conversation.enter("IPHONE15PROConversation"))
+    .text((ctx) => collectFormData(ctx).IPHONE15PRO ? "15 Pro Max " : "15 Pro Max ", (ctx) => ctx.conversation.enter("IPHONE15PROConversation"))
     .row()
-    .text((ctx) => collectFormData(ctx).IPHONE14NORMAL ? "14 Normal " : "14 Normal ", (ctx) => ctx.conversation.enter("IPHONE14NORMALConversation"))
+    .text((ctx) => collectFormData(ctx).IPHONE14NORMAL ? "15 Pro " : "15 Pro ", (ctx) => ctx.conversation.enter("IPHONE14NORMALConversation"))
     .row()
-    .text((ctx) => collectFormData(ctx).IPHONE13PROMAX ? "13 Pro Max " : "13 Pro Max ", (ctx) => ctx.conversation.enter("IPHONE13PROMAXConversation"))
+    .text((ctx) => collectFormData(ctx).IPHONE13PROMAX ? "15 Normal " : "15 Normal ", (ctx) => ctx.conversation.enter("IPHONE13PROMAXConversation"))
     .row()
-    .text((ctx) => collectFormData(ctx).IPHONE13PROMAX ? "13 Pro " : "13 Pro ", (ctx) => ctx.conversation.enter("IPHONE13PROConversation"))
+    .text((ctx) => collectFormData(ctx).IPHONE13PROMAX ? "14 Pro Max " : "14 Pro Max ", (ctx) => ctx.conversation.enter("IPHONE13PROConversation"))
     .row()
     .text("فایل ✅", (ctx) => ctx.conversation.enter("finishConversation"))
     .text("🧹", (ctx) => ctx.conversation.enter("clearFormConversation"));
